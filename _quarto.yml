@@ -26,6 +26,8 @@ nocite: |
 
 format:
   html:
+    include-in-header: 
+      - mathjax.html
     theme: cosmo
   pdf:
     documentclass: scrartcl
@@ -44,7 +46,6 @@ format:
       - packages.tex
       - macros.tex
 
-        
 indent: true
 editor: source
 

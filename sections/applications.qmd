@@ -5,9 +5,23 @@ We now turn our attention to the task of using the ZSE parameterization to const
 ### Estimating the Weighted Sum of Poisson Means
 
 Consider the weighted sum 
+
+\begin{equation}
+Y = \sum_{i=1}^n w_iX_i, \tag{A}\label{eq-test}
+\end{equation}
+
+~\eqref{eq-test}
+
+Black-Scholes (@eq-black-scholes) is a mathematical model that seeks to explain the behavior of financial derivatives, most commonly options:
+
 $$
-Y = \sum_{i=1}^n w_iX_i,
-$${#eq-3-1}
+\frac{\partial \mathrm C}{ \partial \mathrm t } + \frac{1}{2}\sigma^{2} \mathrm S^{2}
+\frac{\partial^{2} \mathrm C}{\partial \mathrm C^2}
+  + \mathrm r \mathrm S \frac{\partial \mathrm C}{\partial \mathrm S}\ =
+  \mathrm r \mathrm C 
+$$ {#eq-black-scholes}
+
+
 where each $w_i$ is a known constant greater than zero. Suppose we take for our parameter of interest the expected value of this weighted sum, so that 
 $$
 \psi \equiv \text{E}(Y) = \sum_{i=1}^n w_i\theta_i.
@@ -144,4 +158,4 @@ $$
                 0, & \bar{\pi} < e^{-\mu}
                 \end{cases}
 $$
-See Appendix A for a formal proof of this statement. Since $\pi$ represents the probability of excess zero counts in the sample, it is unsurprising that our estimate of $\pi$ when $\bar{\pi} \geq e^{-\mu}$ turns out simply to be $0$.^[Recall that $e^{-\mu}$ is the probability of observing a zero under a non-zero-inflated Poisson random variable with rate parameter $\mu$.] Indeed, the observation that $\bar{\pi} \geq e^{-\mu}$ could be considered a bellwether for zero-inflation, as it indicates an empirical excess of zero counts relative to what we would expect for a non-zero-inflated random variable. Hence, we refer to it as the *zero-inflated condition*. Assuming no zero-inflation is present, the MLE of $\mu$ is the sample mean $\bar{y}$. When $\mu$ is unknown, as is typically the case, a sensible choice is therefore to replace it with $\bar{y}$ so that the veracity of $\bar{\pi} \geq e^{-\bar{y}}$ becomes our test of zero-inflation. 
+See Appendix A for a formal proof of this statement. Since $\pi$ represents the probability of excess zero counts in the sample, it is unsurprising that our estimate of $\pi$ when $\bar{\pi} \geq e^{-\mu}$ turns out simply to be $0$.^[Recall that $e^{-\mu}$ is the probability of observing a zero under a non-zero-inflated Poisson random variable with rate parameter $\mu$.] Indeed, the observation that $\bar{\pi} \geq e^{-\mu}$ could be considered a bellwether for zero-inflation, as it indicates an empirical excess of zero counts relative to what we would expect for a non-zero-inflated Poisson random variable. Hence, we refer to it as the *zero-inflated condition*. Assuming no zero-inflation is present, the MLE of $\mu$ is the sample mean $\bar{y}$. When $\mu$ is unknown, as is typically the case, a sensible choice is therefore to replace it with $\bar{y}$ so that the veracity of $\bar{\pi} \geq e^{-\bar{y}}$ becomes our test of zero-inflation. 
