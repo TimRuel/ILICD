@@ -1,0 +1,53 @@
+## Introduction {#sec-intro}
+
+Consider a vector $\theta = (\theta_1, ..., \theta_n)$ in which each component represents the mean of a distinct Poisson process. The purpose of this paper is to discuss the task of conducting likelihood-based inference for a real-valued parameter of interest $\psi = \tau(\theta)$. In particular, we will examine the utility of the integrated likelihood function as a tool for obtaining interval and point estimates for $\psi$, using the performance of the more easily calculated profile likelihood as a benchmark.
+
+We may obtain a sample of values from each Poisson process through repeated measurements of the number of events it generates over a fixed period of time. Suppose we have done so, and let $X_{ij}$ represent the $j$th count from the $i$th sample, so that $X_{ij} \sim \text{Poisson}(\theta_i)$ for $i = 1, ..., n$ and $j = 1, ..., m_i.$  The probability mass function (pmf) for a single observation $X_{ij} = x_{ij}$ is 
+$$
+p(x_{ij}; \> \theta_i) = \frac{e^{-\theta_i} \theta_i ^ {x_{ij}}}{x_{ij}!}, \> \> x_{ij} = 0, 1, 2, ... ; \> \> \theta_i > 0.
+$${#eq-1-1}
+
+Denote the sample of counts from the $i$th process by the vector $X_{i\bullet} = (X_{i1}, ..., X_{im_i})$, its associated mean by $\bar{X}_{i \bullet} = \frac{1}{m_i} \sum_{j = 1}^{m_i} X_{ij}$, and assume that all of the counts both within and between samples are measured independently. The likelihood function for an individual component $\theta_i$ based on the data $X_{i\bullet} = x_{i\bullet}$ is then equal to the product of the individual probabilities of the observed counts, i.e.
+$$
+\begin{aligned}
+L(\theta_i; x_{i\bullet}) &= \prod_{j=1}^{m_i} p(x_{ij}; \theta_i) \\
+                          &= \prod_{j=1}^{m_i} \frac{e^{-\theta_i} \theta_i ^ {x_{ij}}}{x_{ij}!} \\
+                          &= \Bigg(\prod_{j=1}^{m_i} e^{-\theta_i}\Bigg) \Bigg(\prod_{j=1}^{m_i}\theta_i^{x_{ij}}\Bigg) \Bigg(\prod_{j=1}^{m_i} x_{ij}!\Bigg)^{-1} \\
+                          &= \bigg(e^{-\sum_{j=1}^{m_i}\theta_i}\bigg) \bigg(\theta_i^{\sum_{j=1}^{m_i}x_{ij}}\bigg) \Bigg(\prod_{j=1}^{m_i} x_{ij}!\Bigg)^{-1} \\
+                          &= e^{-m_i\theta_i}\theta_i^{m_i\bar{x}_{i\bullet}}\Bigg(\prod_{j=1}^{m_i} x_{ij}!\Bigg)^{-1}.
+\end{aligned}
+$${#eq-1-2}
+
+Since $L$ is only useful to the extent that it informs our understanding of the value of $\theta_i$, we are free to replace it with any other function differing from it by just a (nonzero) multiplicative term that is constant with respect to $\theta_i$, provided that the result still satisfies the necessary regularity conditions, as this will not change any conclusions regarding $\theta_i$ that we draw from it. Hence, we may safely discard the term in parentheses on the final line of @eq-1-2 as it does not depend on $\theta_i$ and instead simply write 
+$$
+L(\theta_i; x_{i\bullet}) = e^{-m_i\theta_i}\theta_i^{m_i\bar{x}_{i\bullet}}.
+$${#eq-1-3}
+
+It will generally be more convenient to work with the log-likelihood function, which is given by 
+$$
+\begin{aligned}
+\ell(\theta_i; x_{i\bullet}) &= \log L(\theta_i; x_{i\bullet}) \\
+                           &= \log \Big(e^{-m_i\theta_i}\theta_i^{m_i\bar{x}_{i\bullet}}\Big) \\
+                           &= -m_i\theta_i + m_i \bar{x}_{i\bullet} \log \theta_i \\
+                           &=  m_i\big(\bar{x}_{i\bullet} \log\theta_i - \theta_i \big).
+\end{aligned}
+$${#eq-1-4}
+The sum of the log-likelihood functions for each component of $\theta$ then forms the basis of the log-likelihood function for $\theta$ itself:
+$$
+\begin{aligned}
+\ell(\theta; x_{1\bullet}, ..., x_{n\bullet}) &= \log L(\theta; x_{1\bullet}, ..., x_{n\bullet}) \\
+                                              &= \log \Bigg(\prod_{i=1}^n L(\theta_i; x_{i\bullet})\Bigg) \\
+                                              &= \sum_{i=1}^n \log L(\theta_i; x_{i\bullet}) \\
+                                              &= \sum_{i=1}^n \ell(\theta_i; x_{i\bullet}) \\
+                                              &= \sum_{i=1}^n m_i\big(\bar{x}_{i\bullet} \log\theta_i - \theta_i \big).
+\end{aligned}
+$${#eq-1-5}
+
+We can derive the maximum likelihood estimate (MLE) for $\theta_i$ by differentiating @eq-1-4 with respect to $\theta_i$, setting the result equal to 0, and solving for $\theta_i$. This gives the nice result that the MLE is simply equal to the mean of the sample of data $X_{i\bullet}$. That is, 
+$$
+\hat{\theta}_i = \bar{X}_{i\bullet}.
+$${#eq-1-6}
+Similarly, the MLE for the full parameter $\theta$ is just the vector of MLEs for its individual components:
+$$
+\hat{\theta} \equiv (\hat{\theta}_1, ..., \hat{\theta}_n) = (\bar{X}_{1\bullet}, ..., \bar{X}_{n\bullet}).
+$${#eq-1-7}

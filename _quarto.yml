@@ -2,22 +2,49 @@ project:
   type: book
 
 book:
-  title: "ILICD"
-  author: "Norah Jones"
-  date: "10/28/2024"
+  title: "Integrated Likelihood Inference in Count Distributions"
+  author: Timothy Ruel
+  date: ""
+  abstract: |
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et 
+    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip 
+    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
+    fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt 
+    mollit anim id est laborum.
   chapters:
     - index.qmd
-    - intro.qmd
-    - summary.qmd
-    - references.qmd
+    - ./sections/pseudolikelihoods.qmd
+    - ./sections/applications.qmd
+    - ./sections/importance_sampling.qmd
+    - ./sections/references.qmd
+  appendices: 
+    - ./sections/appendices/derivations.qmd
 
 bibliography: references.bib
+nocite: |
+  @*
 
 format:
   html:
     theme: cosmo
   pdf:
-    documentclass: scrreprt
+    documentclass: scrartcl
+    number-sections: true
+    top-level-division: section
+    keep-tex: false
+    toc: true
+    link-citations: true
+    colorlinks: false
+    geometry:
+      - top=30mm
+      - left=30mm
+      - right=30mm
+      - heightrounded
+    include-in-header: 
+      - packages.tex
+      - macros.tex
 
-editor: visual
+        
+indent: true
+editor: source
 

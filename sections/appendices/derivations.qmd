@@ -1,0 +1,114 @@
+## Theorems
+
+\begin{theorem}
+Suppose we observe a sample of counts $y_1, ..., y_n$ independently and identically distributed according to a zero-inflated Poisson random variable with parameters $\mu$ and $\pi$, where $\mu > 0$ is the expected Poisson count and $\pi \in [0, 1)$ is the probability of excess zero counts. Let $\bar{\pi} = \frac{1}{n}\sum_{i=1}^n \mathbbm{1}_{y_i = 0}$ represent the proportion of observed zero counts in the sample. Then the partial-MLE for $\pi$ given a particular value of $\mu$ is given by 
+$$
+\hat{\pi}_{\mu} = \begin{cases}
+                \frac{\bar{\pi} - e^{-\mu}}{1 - e^{-\mu}}, & \bar{\pi} \geq e^{-\mu} \\
+                0, & \bar{\pi} < e^{-\mu}
+                \end{cases}
+$$
+\end{theorem}
+\begin{proof}
+The log-likelihood function of the model is 
+$$
+\ell(\mu, \pi) = n \bar{\pi}\log\Big(\pi + (1 - \pi)e^{-\mu}\Big) +  n(1-\bar{\pi})\big(\log(1-\pi) - \mu\big) + n\bar{y}\log \mu; \> \> \mu > 0, \> \pi \in [0,1),
+$$ 
+where $\bar{y} = \frac{1}{n}\sum_{i=1}^n y_i$ denotes the sample mean. This definition artificially restricts the domain of the input $\pi$ to the interval $[0,1)$ to reflect the interpretation of $\pi$ as a probability. Since there is no way to interpret a complex-valued log-likelihood, the $\log(1-\pi)$ expression in the second term above explicitly prohibits values of $\pi \geq 1$ from being passed to $\ell$. However, it is still possible to plug in some values of $\pi < 0$ to $\ell$ and obtain a real number. All that is needed to ensure $\ell$ remains real-valued is for the $\pi + (1 - \pi)e^{-\mu}$ expression inside the logarithm in the first term of the formula to remain positive; there are some negative values of $\pi$ which satisfy this condition.
+\begin{claim}
+$\pi + (1 - \pi)e^{-\mu} > 0$ if and only if $\pi > \frac{1}{1 - e^{\mu}}$.
+\end{claim}
+\begin{claimproof}
+Note that $\mu > 0 \implies 0 < e^{-\mu} < 1$. Then we have
+$$
+\begin{aligned}
+\pi + (1 - \pi)e^{-\mu} > 0 &\iff \pi  - \pi e^{-\mu} + e^{-\mu} > 0 \\ 
+                            &\iff \pi (1 - e^{-\mu}) + e^{-\mu} > 0 \\
+                            &\iff \pi > -\frac{e^{-\mu}}{1-e^{-\mu}} \\
+                            &\iff \pi > \frac{e^{-\mu}}{e^{-\mu} - 1} \\
+                            &\iff \pi > \frac{e^{-\mu}}{e^{-\mu} - 1} \cdot \frac{e^{\mu}}{e^{\mu}} \\
+                            &\iff\pi > \frac{1}{1 - e^{\mu}}.
+\end{aligned}
+$$
+$\text{}$
+\end{claimproof}
+Define the function $l^*$ by extending $\ell$ to include values of $\pi$ in the interval $\Big(\frac{1}{1 - e^{\mu}}, \> 1\Big)$, i.e.
+$$
+\ell^*(\mu, \pi) = n \bar{\pi}\log\Big(\pi + (1 - \pi)e^{-\mu}\Big) +  n(1-\bar{\pi})\big(\log(1-\pi) - \mu\big) + n\bar{y}\log \mu; \> \> \mu > 0, \> \frac{1}{1 - e^{\mu}} < \pi < 1.
+$$ 
+\begin{claim}
+For a given value of $\mu$, the value of $\pi$ that maximizes $\ell^*(\mu, \pi)$ is $\frac{\bar{\pi} - e^{-\mu}}{1 - e^{-\mu}}$.
+\end{claim}
+\begin{claimproof}
+Let $\hat{\pi}_{\mu}^*$ denote the the value of $\pi$ that maximizes $\ell^*(\mu, \pi)$ for a given value of $\mu$. Under suitable regularity conditions, easily satisfied in this case since the Poisson distribution belongs to the well-behaved exponential family of distributions, $\hat{\pi}_{\mu}^*$ is guaranteed to exist and will be the unique value of $\pi$ (as a function of $\mu$ and the data) that solves the critical point equation 
+$$
+\frac{\partial \ell^*(\mu, \pi)}{\partial\pi}\Bigg|_{\pi = \hat{\pi}_{\mu}^*} \equiv 0.
+$$ 
+Hence, we must differentiate $\ell^*$ with respect to $\pi$, evaluate the derivative at $\pi = \hat{\pi}_{\mu}^*$, and set the result equal to $0$. Doing so and then solving for $\hat{\pi}_{\mu}^*$ yields
+$$
+\begin{aligned}
+0 \equiv \frac{\partial \ell^*(\mu, \pi)}{\partial\pi}\Bigg|_{\pi = \hat{\pi}_{\mu}^*} &= \frac{n \bar{\pi}}{\hat{\pi}_{\mu}^* + (1-\hat{\pi}_{\mu}^*)e^{-\mu}}(1 - e^{-\mu}) - \frac{n(1 - \bar{\pi})}{1 - \hat{\pi}_{\mu}^*} = n \Bigg[\frac{\bar{\pi}(1 - e^{-\mu})}{\hat{\pi}_{\mu}^* + (1-\hat{\pi}_{\mu}^*)e^{-\mu}} - \frac{1 - \bar{\pi}}{1 - \hat{\pi}_{\mu}^*} \Bigg]. \\
+&\implies \frac{\bar{\pi}(1 - e^{-\mu})}{\hat{\pi}_{\mu}^* + (1-\hat{\pi}_{\mu}^*)e^{-\mu}} - \frac{1 - \bar{\pi}}{1 - \hat{\pi}_{\mu}^*} = 0 \\
+&\implies \frac{\bar{\pi}(1 - e^{-\mu})}{\hat{\pi}_{\mu}^* + (1-\hat{\pi}_{\mu}^*)e^{-\mu}} = \frac{1 - \bar{\pi}}{1 - \hat{\pi}_{\mu}^*}  \\
+&\implies \frac{(1 - \hat{\pi}_{\mu}^*)(1 - e^{-\mu})}{\hat{\pi}_{\mu}^* + (1-\hat{\pi}_{\mu}^*)e^{-\mu}} = \frac{1 - \bar{\pi}}{\bar{\pi}} \\
+&\implies \frac{\hat{\pi}_{\mu}^* + (1-\hat{\pi}_{\mu}^*)e^{-\mu}}{(1 - \hat{\pi}_{\mu}^*)(1 - e^{-\mu})} = \frac{\bar{\pi}}{1 - \bar{\pi}} \\
+&\implies \frac{\hat{\pi}_{\mu}^*}{(1 - \hat{\pi}_{\mu}^*)(1 - e^{-\mu})} + \frac{(1-\hat{\pi}_{\mu}^*)e^{-\mu}}{(1 - \hat{\pi}_{\mu}^*)(1 - e^{-\mu})} = \frac{\bar{\pi}}{1 - \bar{\pi}} \\
+&\implies \frac{\hat{\pi}_{\mu}^*}{(1 - \hat{\pi}_{\mu}^*)(1 - e^{-\mu})} = \frac{\bar{\pi}}{1 - \bar{\pi}} - \frac{e^{-\mu}}{1 - e^{-\mu}} \\
+&\implies \frac{\hat{\pi}_{\mu}^*}{1 - \hat{\pi}_{\mu}^*} = \frac{\bar{\pi}}{1 - \bar{\pi}}(1 - e^{-\mu}) - e^{-\mu} \\
+&\implies \hat{\pi}_{\mu}^* = \frac{\frac{\bar{\pi}}{1 - \bar{\pi}}(1 - e^{-\mu}) - e^{-\mu}}{\frac{\bar{\pi}}{1 - \bar{\pi}}(1 - e^{-\mu}) - e^{-\mu} + 1} \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \bigg(\frac{A}{1-A} = B \iff A = \frac{B}{B + 1}\bigg)\\
+&\implies \hat{\pi}_{\mu}^* = \frac{\frac{\bar{\pi}}{1 - \bar{\pi}}(1 - e^{-\mu}) - e^{-\mu}}{\frac{\bar{\pi}}{1 - \bar{\pi}}(1 - e^{-\mu}) + (1 - e^{-\mu})} \\
+&\implies \hat{\pi}_{\mu}^* = \frac{\frac{\bar{\pi}}{1 - \bar{\pi}}(1 - e^{-\mu}) - e^{-\mu}}{(\frac{\bar{\pi}}{1 - \bar{\pi}} + 1)(1 - e^{-\mu})} \\
+&\implies \hat{\pi}_{\mu}^* = \frac{\frac{\bar{\pi}}{1 - \bar{\pi}}(1 - e^{-\mu}) - e^{-\mu}}{\frac{1}{1 - \bar{\pi}}(1 - e^{-\mu})} \\
+&\implies \hat{\pi}_{\mu}^* = \frac{\bar{\pi}(1 - e^{-\mu}) - (1 - \bar{\pi})e^{-\mu}}{1 - e^{-\mu}} \\
+&\implies \hat{\pi}_{\mu}^* = \frac{\bar{\pi} - e^{-\mu}}{1 - e^{-\mu}}.
+\end{aligned} 
+$$ 
+$\text{}$
+\end{claimproof}
+\begin{claim}
+When $\bar{\pi} \geq e^{-\mu}$, the value of $\pi$ that maximizes $\ell(\mu, \pi)$ for a given value of $\mu$ is $\hat{\pi}_{\mu}^* = \frac{\bar{\pi} - e^{-\mu}}{1 - e^{-\mu}}$.
+\end{claim}
+\begin{claimproof}
+Note that $\bar{\pi} \geq e^{-\mu} \implies \hat{\pi}_{\mu}^* \geq 0$. Since $\ell(\mu, \pi) = \ell^*(\mu, \pi)$ for any value of $\pi \in [0, 1)$, the claim follows from the previous one.
+\end{claimproof}
+\begin{claim}
+$\pi + (1-\pi)e^{-\mu} \geq e^{-\mu}$ for all $\pi \in [0,1)$ and $\mu > 0$.
+\end{claim}
+\begin{claimproof}
+Let $h(\pi) = \pi + (1 - \pi)e^{-\mu}$ for $\pi \in [0,1)$. Note that $h'(\pi) = 1 - e^{-\mu}$ for all values of $\pi$. $\mu > 0 \implies e^{-\mu} > 1 \implies 1-e^{-\mu} > 0$. Thus, $h'(\pi) > 0$ and so $h(\pi)$ is a strictly increasing function everywhere in its domain. It follows that $h(\pi) \geq h(0) = e^{-\mu}$ for all $\pi \in [0,1)$ and $\mu > 0$.
+\end{claimproof}
+\begin{claim}
+When $\bar{\pi} < e^{-\mu}$, $\ell(\mu, \pi)$ is strictly decreasing with respect to $\pi$ for a fixed value of $\mu$.
+\end{claim}
+\begin{claimproof}
+The derivative of $\ell$ with respect to $\pi$ is given by 
+$$
+\frac{\partial \ell(\mu, \pi)}{\partial\pi} = n\Bigg[\frac{\bar{\pi}(1 - e^{-\mu})}{\pi + (1-\pi)e^{-\mu}} - \frac{1 - \bar{\pi}}{1 - \pi}\Bigg].
+$$
+Note that
+$$
+\begin{aligned}
+\frac{\bar{\pi}(1 - e^{-\mu})}{\pi + (1-\pi)e^{-\mu}} - \frac{1 - \bar{\pi}}{1 - \pi} &= \frac{\bar{\pi}(1 - e^{-\mu})}{\pi + (1-\pi)e^{-\mu}} + \frac{\bar{\pi} - 1}{1 - \pi} \\
+                                                                                      &< \frac{e^{-\mu}(1 - e^{-\mu})}{\pi + (1-\pi)e^{-\mu}} + \frac{e^{-\mu} - 1}{1 - \pi} && (\text{by assumption}) \\
+                                                                                      &\leq \frac{e^{-\mu}(1 - e^{-\mu})}{e^{-\mu}} + \frac{e^{-\mu} - 1}{1 - \pi} && (\text{by Claim 1.4}) \\
+                                                                                      &= 1- e^{-\mu} + \frac{e^{-\mu} - 1}{1 - \pi} \\
+                                                                                      &= (1 - e^{-\mu})\bigg(1 - \frac{1}{1 - \pi}\bigg) \\
+                                                                                      &= (1 - e^{-\mu})\bigg(-\frac{\pi}{1-\pi}\bigg) \\
+                                                                                      &\leq 0.
+\end{aligned}
+$$
+Hence, $\frac{\partial \ell(\mu, \pi)}{\partial\pi} <0$ for all $\pi \in [0, 1)$ when $\bar{\pi} < e^{-\mu}$, and so the claim is proved.
+\end{claimproof}
+\begin{claim}
+When $\bar{\pi} < e^{-\mu}$, the value of $\pi$ that maximizes $\ell(\mu, \pi)$ for a given value of $\mu$ is $0$.
+\end{claim}
+\begin{claimproof}
+Assume $\bar{\pi} < e^{-\mu}$. This implies $\hat{\pi}_{\mu}^* < 0$ and therefore is not a valid input for $\pi$ to $\ell(\mu, \pi)$. By Claim 1.5, $\ell(\mu, \pi)$ is strictly decreasing with respect to $\pi$ for a fixed value of $\mu$. Thus, $\ell(\mu, 0) \geq \ell(\mu, \pi)$ for all $\pi \in [0, 1)$ with equality if and only if $\pi = 0$. Hence, $\pi = 0$ maximizes $\ell(\mu, \pi)$ for a given value of $\mu$, and so the claim is proved.
+\end{claimproof}
+Together, Claim 1.3 and Claim 1.6 establish the result in the theorem.
+\end{proof}
+
+
+
+
+
