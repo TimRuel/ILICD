@@ -2,32 +2,19 @@
 
 We now turn our attention to the task of using the ZSE parameterization to construct an integrated likelihood that can be used to make inferences regarding a parameter of interest derived from the Poisson model described in the introduction. We will 
 
-### Estimating the Weighted Sum of Poisson Means
+## Estimating the Weighted Sum of Poisson Means
 
 Consider the weighted sum 
 
-\begin{equation}
-Y = \sum_{i=1}^n w_iX_i, \tag{A}\label{eq-test}
-\end{equation}
-
-~\eqref{eq-test}
-
-Black-Scholes (@eq-black-scholes) is a mathematical model that seeks to explain the behavior of financial derivatives, most commonly options:
-
 $$
-\frac{\partial \mathrm C}{ \partial \mathrm t } + \frac{1}{2}\sigma^{2} \mathrm S^{2}
-\frac{\partial^{2} \mathrm C}{\partial \mathrm C^2}
-  + \mathrm r \mathrm S \frac{\partial \mathrm C}{\partial \mathrm S}\ =
-  \mathrm r \mathrm C 
-$$ {#eq-black-scholes}
-
-
+Y = \sum_{i=1}^n w_iX_i, 
+$${#eq-3-1-1}
 where each $w_i$ is a known constant greater than zero. Suppose we take for our parameter of interest the expected value of this weighted sum, so that 
 $$
 \psi \equiv \text{E}(Y) = \sum_{i=1}^n w_i\theta_i.
-$${#eq-3-2}
+$${#eq-3-2-1}
 
-### Zero-Inflated Poisson Regression
+## Zero-Inflated Poisson Regression
 
 A sample of count data is called *zero-inflated* when it contains an excess amount of zero-valued observations. A common tactic to account for this excess is to model the data using a mixture of two processes, one that generates zeros and another that generates counts, some of which may also be zeros. When this count-generating process follows a Poisson distribution, we call the resulting mixture a zero-inflated Poisson (ZIP) model.
 
@@ -83,7 +70,7 @@ $$
                   &= \pi + e^{-\mu} - \pi e^{-\mu} \\ 
                   &= \pi + (1 - \pi)e^{-\mu}.
 \end{aligned}
-$$ {#eq-4-1-1} 
+$$ {#eq-3-2-1} 
 In order for $Y$ to take on a value $y > 0$, we must have $U = 1$ and $V = y$. That is, 
 $$
 \begin{aligned}
@@ -91,28 +78,28 @@ $$
                   &= \mathbb{P}(U = 1)\mathbb{P}(V = y) \\
                   &= (1-\pi)\frac{e^{-\mu}\mu^y}{y!}, \> \> y = 1, 2, ...
 \end{aligned}
-$$ {#eq-4-1-2} 
+$$ {#eq-3-2-2} 
 Thus, the full probability mass function (pmf) for a ZIP random variable is given by 
 $$
 \mathbb{P}(Y = y) = \begin{cases}
                     \pi + (1 - \pi)e^{-\mu}, &y =0 \\
                     (1-\pi)\frac{e^{-\mu}\mu^y}{y!}, & y = 1, 2, ...
                     \end{cases}
-$$ {#eq-4-1-3} 
+$$ {#eq-3-2-3} 
 Alternatively, we may write 
 $$
 \mathbb{P}(Y = y) = \Big(\pi + (1 - \pi)e^{-\mu}\Big)^{\mathbbm{1}_{y = 0}}\Bigg(   (1-\pi)\frac{e^{-\mu}\mu^y}{y!}\Bigg)^{1 - {\mathbbm{1}_{y = 0}}}, \> \> y = 0, 1, 2, ...,
-$$ {#eq-4-1-4} 
+$$ {#eq-3-2-4} 
 where $\mathbbm{1}_{y = 0}$ denotes an indicator function that assumes the value one when $y = 0$ and zero otherwise.
 
 Suppose we observe multiple counts $Y_1, ..., Y_n$ generated independently and identically from $Y$.^[Recall that the parameter of a generic Poisson random variable is defined relative to a fixed length of time during which observations may be recorded and added to the running total. By assuming that all counts come from the same ZIP-distributed random variable, we are implicitly assuming that each count was recorded over the same period of time and thus are on equal footing with one another.] The likelihood function for $\mu$ and $\pi$ based on an individual observation $Y_i = y_i$ is simply equal to the pmf for $Y$ evaluated at $y_i$. That is, 
 $$
 L(\mu, \pi; y_i) = \Big(\pi + (1 - \pi)e^{-\mu}\Big)^{\mathbbm{1}_{y_i = 0}}\Bigg(   (1-\pi)\frac{e^{-\mu}\mu^{y_i}}{y_i!}\Bigg)^{1 - {\mathbbm{1}_{y_i = 0}}}, \> \> \mu > 0, \> \> \pi \in [0, 1).
-$$ {#eq-4-1-5} 
+$$ {#eq-3-2-5} 
 We can safely ignore any multiplicative constant in $L$ without influencing our inferences regarding $\mu$ and $\pi$. In particular, we can discard the term $\Big(\frac{1}{y_i!}\Big)^{1 - {\mathbbm{1}_{y_i = 0}}}$ as it depends only on the observation $y_i$ and is constant with respect to the model parameters. Hence, we may write 
 $$
 L(\mu, \pi; y_i) = \Big(\pi + (1 - \pi)e^{-\mu}\Big)^{\mathbbm{1}_{y_i = 0}}\Big(   (1-\pi)e^{-\mu}\mu^{y_i}\Big)^{1 - {\mathbbm{1}_{y_i = 0}}}, \> \> \mu > 0, \> \> \pi \in [0, 1).
-$$ {#eq-4-1-6}
+$$ {#eq-3-2-6}
 From this we may derive the corresponding log-likelihood function: 
 $$
 \begin{aligned}
@@ -122,7 +109,7 @@ $$
                     &= \mathbbm{1}_{y_i = 0} \log\Big(\pi + (1 - \pi)e^{-\mu}\Big) + \big(1- \mathbbm{1}_{y_i = 0}\big)\log\Big((1-\pi)e^{-\mu}\mu^{y_i}\Big) \\
                     &= \mathbbm{1}_{y_i = 0} \log\Big(\pi + (1 - \pi)e^{-\mu}\Big) + \big(1- \mathbbm{1}_{y_i = 0}\big)\Big(\log(1-\pi) - \mu + y_i \log \mu\Big).
 \end{aligned}
-$$ {#eq-4-1-7} 
+$$ {#eq-3-2-7} 
 The log-likelihood for the full sample $y_{\bullet} \equiv (y_1, ..., y_n)$ is then obtained by summing over the index variable $i$ as follows: 
 $$
 \fontsize{12pt}{12pt}\selectfont
@@ -132,30 +119,54 @@ $$
                             &= \sum_{i=1}^n \mathbbm{1}_{y_i = 0} \log\Big(\pi + (1 - \pi)e^{-\mu}\Big) + \sum_{i=1}^n\big(1- \mathbbm{1}_{y_i = 0}\big)\Big(\log(1-\pi) - \mu + y_i \log \mu\Big) \\
                             &= \log\Big(\pi + (1 - \pi)e^{-\mu}\Big) \underbrace{\sum_{i=1}^n \mathbbm{1}_{y_i = 0}}_{\text{A}} + \big(\log(1-\pi) - \mu\big)\underbrace{\sum_{i=1}^n (1-\mathbbm{1}_{y_i = 0})}_{\text{B}} + \log \mu \underbrace{\sum_{i=1}^n (1-\mathbbm{1}_{y_i = 0}) y_i}_{\text{C}}.
 \end{aligned}
-$$ {#eq-4-1-8}
+$$ {#eq-3-2-8}
 
 The summation in A is counting the number of zero counts in the sample. Let $\bar{\pi}$ represent the proportion of these observed zero counts in the sample so that 
 $$
 n\bar{\pi} \equiv \sum_{i=1}^n \mathbbm{1}_{y_i = 0}.
-$$ {#eq-4-1-9} 
+$$ {#eq-3-2-9} 
 Similarly, the summation in B is counting the number of nonzero counts in the sample. Since $1-\bar{\pi}$ represents the proportion of the observed nonzero counts, it follows that 
 $$
 n(1-\bar{\pi}) \equiv \sum_{i=1}^n (1-\mathbbm{1}_{y_i = 0}).
-$$ {#eq-4-1-10} 
+$$ {#eq-3-2-10} 
 Finally, consider the summation in C. Whenever $y_i = 0$, $(1-\mathbbm{1}_{y_i = 0})y_i = (1-1)\cdot 0 = 0 = y_i$. Whenever $y_i > 0$, $(1-\mathbbm{1}_{y_i = 0})y_i = (1-0)y_i = y_i.$ It follows that $(1-\mathbbm{1}_{y_i = 0})y_i = y_i$ for all values of $y_i$. Hence, the summation is simply adding all the observed counts in the sample. Let $\bar{y}$ denote the sample mean so that 
 $$
 n \bar{y} \equiv \sum_{i=1}^n y_i = \sum_{i=1}^n (1-\mathbbm{1}_{y_i = 0})y_i
-$$ {#eq-4-1-11} 
-Substituting these three expressions on the left in @eq-4-1-9, @eq-4-1-10, and @eq-4-1-11 for their corresponding summations in the final line of @eq-4-1-8, we arrive at 
+$$ {#eq-3-2-11} 
+Substituting these three expressions on the left in @eq-3-2-9, @eq-3-2-10, and @eq-3-2-11 for their corresponding summations in the final line of @eq-3-2-8, we arrive at 
 $$
 \ell(\mu, \pi; y_{\bullet}) = n \bar{\pi}\log\Big(\pi + (1 - \pi)e^{-\mu}\Big) +  n(1-\bar{\pi})\big(\log(1-\pi) - \mu\big) + n\bar{y}\log \mu.
-$$ {#eq-4-1-12}
+$$ {#eq-3-2-12}
 
-The partial maximum likelihood estimator of $\pi$ for a particular value of $\mu$ is given by 
+Suppose that $\mu$ is our parameter of interest, and $\pi$ is a nuisance parameter. The partial-MLE for $\pi$ given a particular value of $\mu$, as defined in @eq-2-1-2, is given by 
 $$
 \hat{\pi}_{\mu} = \begin{cases}
                 \frac{\bar{\pi} - e^{-\mu}}{1 - e^{-\mu}}, & \bar{\pi} \geq e^{-\mu} \\
                 0, & \bar{\pi} < e^{-\mu}
                 \end{cases}
-$$
+$${#eq-3-2-13}
 See Appendix A for a formal proof of this statement. Since $\pi$ represents the probability of excess zero counts in the sample, it is unsurprising that our estimate of $\pi$ when $\bar{\pi} \geq e^{-\mu}$ turns out simply to be $0$.^[Recall that $e^{-\mu}$ is the probability of observing a zero under a non-zero-inflated Poisson random variable with rate parameter $\mu$.] Indeed, the observation that $\bar{\pi} \geq e^{-\mu}$ could be considered a bellwether for zero-inflation, as it indicates an empirical excess of zero counts relative to what we would expect for a non-zero-inflated Poisson random variable. Hence, we refer to it as the *zero-inflated condition*. Assuming no zero-inflation is present, the MLE of $\mu$ is the sample mean $\bar{y}$. When $\mu$ is unknown, as is typically the case, a sensible choice is therefore to replace it with $\bar{y}$ so that the veracity of $\bar{\pi} \geq e^{-\bar{y}}$ becomes our test of zero-inflation. 
+
+Assume that our observed sample of counts $y_1, ..., y_n$ satisfies the zero-inflated condition, so that $\hat{\pi}_{\mu} = \frac{\bar{\pi} - e^{-\mu}}{1 - e^{-\mu}}.$ This implies 
+$$
+1 - \hat{\pi}_{\mu} = \frac{1 - e^{-\mu}}{1 - e^{-\mu}} - \frac{\bar{\pi} - e^{-\mu}}{1 - e^{-\mu}} = \frac{1-e^{-\mu} - \bar{\pi} + e^{-\mu}}{1 - e^{-\mu}} = \frac{1 - \bar{\pi}}{1 - e^{-\mu}}.
+$${#eq-3-2-14}
+and
+$$
+\hat{\pi}_{\mu} + (1 - \hat{\pi}_{\mu})e^{-\mu} = \frac{\bar{\pi} - e^{-\mu}}{1 - e^{-\mu}} + \frac{1 - \bar{\pi}}{1 - e^{-\mu}}e^{-\mu} = \frac{\bar{\pi}(1 - e^{-\mu})}{1 - e^{-\mu}}  = \bar{\pi}.
+$${#eq-3-2-15}
+Per @eq-2-1-3, the profile log-likelihood for $\mu$ can be obtained by plugging this partial-MLE for $\mu$ into the full log-likelihood:
+$$
+\begin{aligned}
+\ell_p(\mu) &= \ell(\mu, \hat{\pi}_{\mu}) \\
+            &= n \bar{\pi}\log\Big(\hat{\pi}_{\mu} + (1 - \hat{\pi}_{\mu})e^{-\mu}\Big) +  n(1-\bar{\pi})\big(\log(1-\hat{\pi}_{\mu}) - \mu\big) + n\bar{y}\log \mu \\
+            &= n \bar{\pi}\log(\bar{\pi}) +  n(1-\bar{\pi})\Bigg(\log\bigg(\frac{1 - \bar{\pi}}{1 - e^{-\mu}}\bigg) - \mu\Bigg) + n\bar{y}\log \mu \\
+            &= n\Big[\bar{y}\log \mu - (1-\bar{\pi})\big(\log(1-e^{-\mu}) + \mu \big)\Big] + n \bar{\pi}\log(\bar{\pi}) + n(1-\bar{\pi})\log(1-\bar{\pi}).
+\end{aligned}
+$${#eq-3-2-16}
+As usual, we can discard the terms not depending on $\mu$, yielding 
+$$
+\ell_p(\mu) = n\Big[\bar{y}\log \mu - (1-\bar{\pi})\big(\log(1-e^{-\mu}) + \mu \big)\Big].
+$${#eq-3-2-17}
+
+

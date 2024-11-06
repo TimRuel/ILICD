@@ -82,7 +82,7 @@ $$
 \end{aligned}
 $$
 
-### Self-normalized importance sampling
+## Self-normalized importance sampling
 $\pi(\theta | X) = cL(\theta;X)p(\theta)$, $c > 0$ unknown.
 $p_u(\theta) = a p(\theta)$, $a > 0$ unknown.
 $p_u(\theta) = b p(\theta)$, $a > 0$ unknown.

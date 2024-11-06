@@ -26,8 +26,6 @@ nocite: |
 
 format:
   html:
-    include-in-header: 
-      - mathjax.html
     theme: cosmo
   pdf:
     documentclass: scrartcl

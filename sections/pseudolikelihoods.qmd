@@ -7,27 +7,33 @@ If we let $\Theta_{\psi} = \{\theta \in \Theta: \> \tau(\theta) = \psi \},$ then
 
 We can construct pseudolikelihoods for $\psi$ through clever choices by which to summarize $\mathcal{L}_{\psi}$ over all possible values of $\lambda$. Among the most popular methods of summary are profiling (i.e. maximization), conditioning, and integration, each with respect to the nuisance parameter. These summaries do come at a cost, however; eliminating a model's nuisance parameter from its likelihood almost always sacrifices some information about its parameter of interest as well. One measure of a good pseudolikelihood, therefore, is the balance it strikes between the amount of information it retains about $\psi$ and the ease with which it can be computed.
 
-### The Profile Likelihood
+## The Profile Likelihood
 
 The most straightforward method we can use to construct a pseudolikelihood (or equivalently, a pseudo-log-likelihood) function for $\psi$ is usually to find the maximum of $\ell(\theta)$ over all possible of values of $\theta$ for each value of $\psi$. This yields what is known as the *profile* log-likelihood function, formally defined as 
 $$
 \ell_p(\psi) = \sup_{\theta \in \Theta: \> \tau(\theta) = \psi} \ell(\theta), \> \> \psi \in \Psi.
 $${#eq-2-1-1}
-In the case where an explicit nuisance parameter $\lambda$ exists so that $\theta$ may be written as $\theta = (\psi, \lambda)$, @eq-2-1-1 is equivalent to replacing $\lambda$ with $\hat{\lambda}_{\psi}$, its conditional MLE given $\psi$:
+
+Suppose that $\psi$ and $\lambda$ are both explicit model parameters, with associated parameter spaces $\Psi$ and $\Lambda$, respectively, so that the full parameter $\theta$ may be decomposed as $\theta = (\psi, \lambda)$. Assuming our model of choice satisfies the appropriate regularity conditions (see the appendix for further discussion), it will be possible to derive what is called the *partial-MLE for $\lambda$ given a particular value of $\psi$*. This estimator, which we denote using the symbol $\hat{\lambda}_{\psi}$, will be a function of both the data and $\psi$.^[This is in contrast to the regular MLE for $\lambda$ which, if it exists, would be a function of the data alone.] By "a particular value of $\psi$", we mean that for any specific value of $\psi$ that we choose, say $\psi_1$, the corresponding value $\hat{\lambda}_{\psi_1}$ will be the value of $\lambda$ that maximizes the function $\ell(\psi_1, \lambda)$ over all possible values of $\lambda$. Formally, 
+$$
+\hat{\lambda}_{\psi} = \underset{\lambda \in \Lambda}{\arg\max} \> \> \ell(\psi, \lambda).
+$${#eq-2-1-2}
+
+For models in which it exists and has a closed form expression, $\hat{\lambda}_{\psi}$ can be used to derive the model's profile log-likelihood. Indeed, doing so is almost trivial as the task of solving @eq-2-1-1 reduces simply to plugging in $\hat{\lambda}_{\psi}$ for $\lambda$ in the log-likelihood:
 $$
 \ell_p(\psi) = \ell(\psi, \hat{\lambda}_{\psi}).
-$${#eq-2-1-2}
+$${#eq-2-1-3}
 
 Historically, the efficiency with which the profile is capable of producing accurate estimates of $\psi$ relative to its ease of computation has made it the method of choice for statisticians when performing likelihood-based inference regarding a parameter of interest. Examples of profile-based statistics are the MLE for $\psi$, i.e.,
 $$
 \hat{\psi} = \underset{\psi \in \Psi}{\arg\sup} \> \ell_p(\psi),
-$${#eq-2-1-3}
+$${#eq-2-1-4}
 and the signed likelihood ratio statistic for $\psi$, given by
 $$
 R_{\psi} = \text{sgn}(\hat{\psi} - \psi)(2(\ell_p(\hat{\psi}) - \ell_p(\psi)))^{\frac{1}{2}}.
-$${#eq-2-1-4}
+$${#eq-2-1-5}
 
-### The Integrated Likelihood
+## The Integrated Likelihood
 
 The *integrated likelihood* for $\psi$ seeks to summarize $\mathcal{L}_{\psi}$ by its average value with respect to some weight function $\pi$ over the space $\Theta_{\psi}$. From a theoretical standpoint, this is preferable to the maximization procedure found in the profile likelihood as it naturally incorporates our uncertainty regarding the nuisance parameter's true value into the resulting pseudolikelihood. The general form of an integrated likelihood function is given
 $$
