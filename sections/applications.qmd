@@ -61,14 +61,14 @@ data |>
         )
 ```
 
-Let $U \sim \text{Bernoulli}(1 - \pi)$ and $V \sim \text{Poisson}(\mu)$. Suppose $U$ and $V$ are independent and let $Y = UV$. Then $Y \sim \text{ZIP}(\mu, \pi)$. To derive its distribution, we begin by recognizing that $Y = 0$ when either $U = 0$ or $V = 0$ so that 
+Let $U \sim \text{Bernoulli}(1 - \rho)$ and $V \sim \text{Poisson}(\mu)$. Suppose $U$ and $V$ are independent and let $Y = UV$. Then $Y \sim \text{ZIP}(\mu, \rho)$. To derive its distribution, we begin by recognizing that $Y = 0$ when either $U = 0$ or $V = 0$ so that 
 $$
 \begin{aligned}
 \mathbb{P}(Y = 0) &= \mathbb{P}(U = 0 \cup V = 0) \\
                   &= \mathbb{P}(U = 0) + \mathbb{P}(V = 0) - \mathbb{P}(U = 0 \cap V = 0) \\
                   &= \mathbb{P}(U = 0) + \mathbb{P}(V = 0) - \mathbb{P}(U = 0)\mathbb{P}(V = 0) \\
-                  &= \pi + e^{-\mu} - \pi e^{-\mu} \\ 
-                  &= \pi + (1 - \pi)e^{-\mu}.
+                  &= \rho + e^{-\mu} - \rho e^{-\mu} \\ 
+                  &= \rho + (1 - \rho)e^{-\mu}.
 \end{aligned}
 $$ {#eq-3-2-1} 
 In order for $Y$ to take on a value $y > 0$, we must have $U = 1$ and $V = y$. That is, 
@@ -76,58 +76,58 @@ $$
 \begin{aligned}
 \mathbb{P}(Y = y) &= \mathbb{P}(U = 1 \cap V = y) \\
                   &= \mathbb{P}(U = 1)\mathbb{P}(V = y) \\
-                  &= (1-\pi)\frac{e^{-\mu}\mu^y}{y!}, \> \> y = 1, 2, ...
+                  &= (1-\rho)\frac{e^{-\mu}\mu^y}{y!}, \> \> y = 1, 2, ...
 \end{aligned}
 $$ {#eq-3-2-2} 
 Thus, the full probability mass function (pmf) for a ZIP random variable is given by 
 $$
 \mathbb{P}(Y = y) = \begin{cases}
-                    \pi + (1 - \pi)e^{-\mu}, &y =0 \\
-                    (1-\pi)\frac{e^{-\mu}\mu^y}{y!}, & y = 1, 2, ...
+                    \rho + (1 - \rho)e^{-\mu}, &y =0 \\
+                    (1-\rho)\frac{e^{-\mu}\mu^y}{y!}, & y = 1, 2, ...
                     \end{cases}
 $$ {#eq-3-2-3} 
 Alternatively, we may write 
 $$
-\mathbb{P}(Y = y) = \Big(\pi + (1 - \pi)e^{-\mu}\Big)^{\mathbbm{1}_{y = 0}}\Bigg(   (1-\pi)\frac{e^{-\mu}\mu^y}{y!}\Bigg)^{1 - {\mathbbm{1}_{y = 0}}}, \> \> y = 0, 1, 2, ...,
+\mathbb{P}(Y = y) = \Big(\rho + (1 - \rho)e^{-\mu}\Big)^{\mathbbm{1}_{y = 0}}\Bigg(   (1-\rho)\frac{e^{-\mu}\mu^y}{y!}\Bigg)^{1 - {\mathbbm{1}_{y = 0}}}, \> \> y = 0, 1, 2, ...,
 $$ {#eq-3-2-4} 
 where $\mathbbm{1}_{y = 0}$ denotes an indicator function that assumes the value one when $y = 0$ and zero otherwise.
 
-Suppose we observe multiple counts $Y_1, ..., Y_n$ generated independently and identically from $Y$.^[Recall that the parameter of a generic Poisson random variable is defined relative to a fixed length of time during which observations may be recorded and added to the running total. By assuming that all counts come from the same ZIP-distributed random variable, we are implicitly assuming that each count was recorded over the same period of time and thus are on equal footing with one another.] The likelihood function for $\mu$ and $\pi$ based on an individual observation $Y_i = y_i$ is simply equal to the pmf for $Y$ evaluated at $y_i$. That is, 
+Suppose we observe multiple counts $Y_1, ..., Y_n$ generated independently and identically from $Y$.^[Recall that the parameter of a generic Poisson random variable is defined relative to a fixed length of time during which observations may be recorded and added to the running total. By assuming that all counts come from the same ZIP-distributed random variable, we are implicitly assuming that each count was recorded over the same period of time and thus are on equal footing with one another.] The likelihood function for $\mu$ and $\rho$ based on an individual observation $Y_i = y_i$ is simply equal to the pmf for $Y$ evaluated at $y_i$. That is, 
 $$
-L(\mu, \pi; y_i) = \Big(\pi + (1 - \pi)e^{-\mu}\Big)^{\mathbbm{1}_{y_i = 0}}\Bigg(   (1-\pi)\frac{e^{-\mu}\mu^{y_i}}{y_i!}\Bigg)^{1 - {\mathbbm{1}_{y_i = 0}}}, \> \> \mu > 0, \> \> \pi \in [0, 1).
+L(\mu, \rho; y_i) = \Big(\rho + (1 - \rho)e^{-\mu}\Big)^{\mathbbm{1}_{y_i = 0}}\Bigg(   (1-\rho)\frac{e^{-\mu}\mu^{y_i}}{y_i!}\Bigg)^{1 - {\mathbbm{1}_{y_i = 0}}}, \> \> \mu > 0, \> \> \rho \in [0, 1).
 $$ {#eq-3-2-5} 
-We can safely ignore any multiplicative constant in $L$ without influencing our inferences regarding $\mu$ and $\pi$. In particular, we can discard the term $\Big(\frac{1}{y_i!}\Big)^{1 - {\mathbbm{1}_{y_i = 0}}}$ as it depends only on the observation $y_i$ and is constant with respect to the model parameters. Hence, we may write 
+We can safely ignore any multiplicative constant in $L$ without influencing our inferences regarding $\mu$ and $\rho$. In particular, we can discard the term $\Big(\frac{1}{y_i!}\Big)^{1 - {\mathbbm{1}_{y_i = 0}}}$ as it depends only on the observation $y_i$ and is constant with respect to the model parameters. Hence, we may write 
 $$
-L(\mu, \pi; y_i) = \Big(\pi + (1 - \pi)e^{-\mu}\Big)^{\mathbbm{1}_{y_i = 0}}\Big(   (1-\pi)e^{-\mu}\mu^{y_i}\Big)^{1 - {\mathbbm{1}_{y_i = 0}}}, \> \> \mu > 0, \> \> \pi \in [0, 1).
+L(\mu, \rho; y_i) = \Big(\rho + (1 - \rho)e^{-\mu}\Big)^{\mathbbm{1}_{y_i = 0}}\Big(   (1-\rho)e^{-\mu}\mu^{y_i}\Big)^{1 - {\mathbbm{1}_{y_i = 0}}}, \> \> \mu > 0, \> \> \rho \in [0, 1).
 $$ {#eq-3-2-6}
 From this we may derive the corresponding log-likelihood function: 
 $$
 \begin{aligned}
-\ell(\mu, \pi; y_i) &= \log L(\mu, \pi; y_i) \\
-                    &= \log\Bigg\{\Big(\pi + (1 - \pi)e^{-\mu}\Big)^{\mathbbm{1}_{y_i = 0}}\Big(   (1-\pi)e^{-\mu}\mu^{y_i}\Big)^{1 - {\mathbbm{1}_{y_i = 0}}} \Bigg\} \\
-                    &= \log \Bigg\{\Big(\pi + (1 - \pi)e^{-\mu}\Big)^{\mathbbm{1}_{y_i = 0}} \Bigg\} + \log \Bigg\{ \Big(   (1-\pi)e^{-\mu}\mu^{y_i}\Big)^{1 - {\mathbbm{1}_{y_i = 0}}} \Bigg\} \\
-                    &= \mathbbm{1}_{y_i = 0} \log\Big(\pi + (1 - \pi)e^{-\mu}\Big) + \big(1- \mathbbm{1}_{y_i = 0}\big)\log\Big((1-\pi)e^{-\mu}\mu^{y_i}\Big) \\
-                    &= \mathbbm{1}_{y_i = 0} \log\Big(\pi + (1 - \pi)e^{-\mu}\Big) + \big(1- \mathbbm{1}_{y_i = 0}\big)\Big(\log(1-\pi) - \mu + y_i \log \mu\Big).
+\ell(\mu, \rho; y_i) &= \log L(\mu, \rho; y_i) \\
+                    &= \log\Bigg\{\Big(\rho + (1 - \rho)e^{-\mu}\Big)^{\mathbbm{1}_{y_i = 0}}\Big(   (1-\rho)e^{-\mu}\mu^{y_i}\Big)^{1 - {\mathbbm{1}_{y_i = 0}}} \Bigg\} \\
+                    &= \log \Bigg\{\Big(\rho + (1 - \rho)e^{-\mu}\Big)^{\mathbbm{1}_{y_i = 0}} \Bigg\} + \log \Bigg\{ \Big(   (1-\rho)e^{-\mu}\mu^{y_i}\Big)^{1 - {\mathbbm{1}_{y_i = 0}}} \Bigg\} \\
+                    &= \mathbbm{1}_{y_i = 0} \log\Big(\rho + (1 - \rho)e^{-\mu}\Big) + \big(1- \mathbbm{1}_{y_i = 0}\big)\log\Big((1-\rho)e^{-\mu}\mu^{y_i}\Big) \\
+                    &= \mathbbm{1}_{y_i = 0} \log\Big(\rho + (1 - \rho)e^{-\mu}\Big) + \big(1- \mathbbm{1}_{y_i = 0}\big)\Big(\log(1-\rho) - \mu + y_i \log \mu\Big).
 \end{aligned}
 $$ {#eq-3-2-7} 
 The log-likelihood for the full sample $y_{\bullet} \equiv (y_1, ..., y_n)$ is then obtained by summing over the index variable $i$ as follows: 
 $$
 \fontsize{12pt}{12pt}\selectfont
 \begin{aligned}
-\ell(\mu, \pi; y_{\bullet}) &= \sum_{i=1}^n \ell(\mu, \pi; y_i) \\
-                            &= \sum_{i=1}^n \bigg[\mathbbm{1}_{y_i = 0} \log\Big(\pi + (1 - \pi)e^{-\mu}\Big) + \big(1- \mathbbm{1}_{y_i = 0}\big)\Big(\log(1-\pi) - \mu + y_i \log \mu\Big)\bigg] \\
-                            &= \sum_{i=1}^n \mathbbm{1}_{y_i = 0} \log\Big(\pi + (1 - \pi)e^{-\mu}\Big) + \sum_{i=1}^n\big(1- \mathbbm{1}_{y_i = 0}\big)\Big(\log(1-\pi) - \mu + y_i \log \mu\Big) \\
-                            &= \log\Big(\pi + (1 - \pi)e^{-\mu}\Big) \underbrace{\sum_{i=1}^n \mathbbm{1}_{y_i = 0}}_{\text{A}} + \big(\log(1-\pi) - \mu\big)\underbrace{\sum_{i=1}^n (1-\mathbbm{1}_{y_i = 0})}_{\text{B}} + \log \mu \underbrace{\sum_{i=1}^n (1-\mathbbm{1}_{y_i = 0}) y_i}_{\text{C}}.
+\ell(\mu, \rho; y_{\bullet}) &= \sum_{i=1}^n \ell(\mu, \rho; y_i) \\
+                            &= \sum_{i=1}^n \bigg[\mathbbm{1}_{y_i = 0} \log\Big(\rho + (1 - \rho)e^{-\mu}\Big) + \big(1- \mathbbm{1}_{y_i = 0}\big)\Big(\log(1-\rho) - \mu + y_i \log \mu\Big)\bigg] \\
+                            &= \sum_{i=1}^n \mathbbm{1}_{y_i = 0} \log\Big(\rho + (1 - \rho)e^{-\mu}\Big) + \sum_{i=1}^n\big(1- \mathbbm{1}_{y_i = 0}\big)\Big(\log(1-\rho) - \mu + y_i \log \mu\Big) \\
+                            &= \log\Big(\rho + (1 - \rho)e^{-\mu}\Big) \underbrace{\sum_{i=1}^n \mathbbm{1}_{y_i = 0}}_{\text{A}} + \big(\log(1-\rho) - \mu\big)\underbrace{\sum_{i=1}^n (1-\mathbbm{1}_{y_i = 0})}_{\text{B}} + \log \mu \underbrace{\sum_{i=1}^n (1-\mathbbm{1}_{y_i = 0}) y_i}_{\text{C}}.
 \end{aligned}
 $$ {#eq-3-2-8}
 
-The summation in A is counting the number of zero counts in the sample. Let $\bar{\pi}$ represent the proportion of these observed zero counts in the sample so that 
+The summation in A is counting the number of zero counts in the sample. Let $\bar{\rho}$ represent the proportion of these observed zero counts in the sample so that 
 $$
-n\bar{\pi} \equiv \sum_{i=1}^n \mathbbm{1}_{y_i = 0}.
+n\bar{\rho} \equiv \sum_{i=1}^n \mathbbm{1}_{y_i = 0}.
 $$ {#eq-3-2-9} 
-Similarly, the summation in B is counting the number of nonzero counts in the sample. Since $1-\bar{\pi}$ represents the proportion of the observed nonzero counts, it follows that 
+Similarly, the summation in B is counting the number of nonzero counts in the sample. Since $1-\bar{\rho}$ represents the proportion of the observed nonzero counts, it follows that 
 $$
-n(1-\bar{\pi}) \equiv \sum_{i=1}^n (1-\mathbbm{1}_{y_i = 0}).
+n(1-\bar{\rho}) \equiv \sum_{i=1}^n (1-\mathbbm{1}_{y_i = 0}).
 $$ {#eq-3-2-10} 
 Finally, consider the summation in C. Whenever $y_i = 0$, $(1-\mathbbm{1}_{y_i = 0})y_i = (1-1)\cdot 0 = 0 = y_i$. Whenever $y_i > 0$, $(1-\mathbbm{1}_{y_i = 0})y_i = (1-0)y_i = y_i.$ It follows that $(1-\mathbbm{1}_{y_i = 0})y_i = y_i$ for all values of $y_i$. Hence, the summation is simply adding all the observed counts in the sample. Let $\bar{y}$ denote the sample mean so that 
 $$
@@ -135,38 +135,70 @@ n \bar{y} \equiv \sum_{i=1}^n y_i = \sum_{i=1}^n (1-\mathbbm{1}_{y_i = 0})y_i
 $$ {#eq-3-2-11} 
 Substituting these three expressions on the left in @eq-3-2-9, @eq-3-2-10, and @eq-3-2-11 for their corresponding summations in the final line of @eq-3-2-8, we arrive at 
 $$
-\ell(\mu, \pi; y_{\bullet}) = n \bar{\pi}\log\Big(\pi + (1 - \pi)e^{-\mu}\Big) +  n(1-\bar{\pi})\big(\log(1-\pi) - \mu\big) + n\bar{y}\log \mu.
+\ell(\mu, \rho; y_{\bullet}) = n \bar{\rho}\log\Big(\rho + (1 - \rho)e^{-\mu}\Big) +  n(1-\bar{\rho})\big(\log(1-\rho) - \mu\big) + n\bar{y}\log \mu.
 $$ {#eq-3-2-12}
 
-Suppose that $\mu$ is our parameter of interest, and $\pi$ is a nuisance parameter. The partial-MLE for $\pi$ given a particular value of $\mu$, as defined in @eq-2-1-2, is given by 
+### Profile Likelihood
+
+Suppose that $\mu$ is our parameter of interest, and $\rho$ is a nuisance parameter. The partial-MLE for $\rho$ given a particular value of $\mu$, as defined in @eq-2-1-2, is given by 
 $$
-\hat{\pi}_{\mu} = \begin{cases}
-                \frac{\bar{\pi} - e^{-\mu}}{1 - e^{-\mu}}, & \bar{\pi} \geq e^{-\mu} \\
-                0, & \bar{\pi} < e^{-\mu}
+\hat{\rho}_{\mu} = \begin{cases}
+                \frac{\bar{\rho} - e^{-\mu}}{1 - e^{-\mu}}, & \bar{\rho} \geq e^{-\mu} \\
+                0, & \bar{\rho} < e^{-\mu}
                 \end{cases}
 $${#eq-3-2-13}
-See Appendix A for a formal proof of this statement. Since $\pi$ represents the probability of excess zero counts in the sample, it is unsurprising that our estimate of $\pi$ when $\bar{\pi} \geq e^{-\mu}$ turns out simply to be $0$.^[Recall that $e^{-\mu}$ is the probability of observing a zero under a non-zero-inflated Poisson random variable with rate parameter $\mu$.] Indeed, the observation that $\bar{\pi} \geq e^{-\mu}$ could be considered a bellwether for zero-inflation, as it indicates an empirical excess of zero counts relative to what we would expect for a non-zero-inflated Poisson random variable. Hence, we refer to it as the *zero-inflated condition*. Assuming no zero-inflation is present, the MLE of $\mu$ is the sample mean $\bar{y}$. When $\mu$ is unknown, as is typically the case, a sensible choice is therefore to replace it with $\bar{y}$ so that the veracity of $\bar{\pi} \geq e^{-\bar{y}}$ becomes our test of zero-inflation. 
+See Appendix A for a formal proof of this statement. Since $\rho$ represents the probability of excess zero counts in the sample, it is unsurprising that our estimate of $\rho$ when $\bar{\rho} \geq e^{-\mu}$ turns out simply to be $0$.^[Recall that $e^{-\mu}$ is the probability of observing a zero under a non-zero-inflated Poisson random variable with rate parameter $\mu$.] Indeed, the observation that $\bar{\rho} \geq e^{-\mu}$ could be considered a bellwether for zero-inflation, as it indicates an empirical excess of zero counts relative to what we would expect for a non-zero-inflated Poisson random variable. Hence, we refer to it as the *zero-inflated condition*. Assuming no zero-inflation is present, the MLE of $\mu$ is the sample mean $\bar{y}$. When $\mu$ is unknown, as is typically the case, a sensible choice is therefore to replace it with $\bar{y}$ so that the veracity of $\bar{\rho} \geq e^{-\bar{y}}$ becomes our test of zero-inflation. 
 
-Assume that our observed sample of counts $y_1, ..., y_n$ satisfies the zero-inflated condition, so that $\hat{\pi}_{\mu} = \frac{\bar{\pi} - e^{-\mu}}{1 - e^{-\mu}}.$ This implies 
+Assume that our observed sample of counts $y_1, ..., y_n$ satisfies the zero-inflated condition, so that $\hat{\rho}_{\mu} = \frac{\bar{\rho} - e^{-\mu}}{1 - e^{-\mu}}.$ This implies 
 $$
-1 - \hat{\pi}_{\mu} = \frac{1 - e^{-\mu}}{1 - e^{-\mu}} - \frac{\bar{\pi} - e^{-\mu}}{1 - e^{-\mu}} = \frac{1-e^{-\mu} - \bar{\pi} + e^{-\mu}}{1 - e^{-\mu}} = \frac{1 - \bar{\pi}}{1 - e^{-\mu}}.
+1 - \hat{\rho}_{\mu} = \frac{1 - e^{-\mu}}{1 - e^{-\mu}} - \frac{\bar{\rho} - e^{-\mu}}{1 - e^{-\mu}} = \frac{1-e^{-\mu} - \bar{\rho} + e^{-\mu}}{1 - e^{-\mu}} = \frac{1 - \bar{\rho}}{1 - e^{-\mu}}.
 $${#eq-3-2-14}
 and
 $$
-\hat{\pi}_{\mu} + (1 - \hat{\pi}_{\mu})e^{-\mu} = \frac{\bar{\pi} - e^{-\mu}}{1 - e^{-\mu}} + \frac{1 - \bar{\pi}}{1 - e^{-\mu}}e^{-\mu} = \frac{\bar{\pi}(1 - e^{-\mu})}{1 - e^{-\mu}}  = \bar{\pi}.
+\hat{\rho}_{\mu} + (1 - \hat{\rho}_{\mu})e^{-\mu} = \frac{\bar{\rho} - e^{-\mu}}{1 - e^{-\mu}} + \frac{1 - \bar{\rho}}{1 - e^{-\mu}}e^{-\mu} = \frac{\bar{\rho}(1 - e^{-\mu})}{1 - e^{-\mu}}  = \bar{\rho}.
 $${#eq-3-2-15}
 Per @eq-2-1-3, the profile log-likelihood for $\mu$ can be obtained by plugging this partial-MLE for $\mu$ into the full log-likelihood:
 $$
 \begin{aligned}
-\ell_p(\mu) &= \ell(\mu, \hat{\pi}_{\mu}) \\
-            &= n \bar{\pi}\log\Big(\hat{\pi}_{\mu} + (1 - \hat{\pi}_{\mu})e^{-\mu}\Big) +  n(1-\bar{\pi})\big(\log(1-\hat{\pi}_{\mu}) - \mu\big) + n\bar{y}\log \mu \\
-            &= n \bar{\pi}\log(\bar{\pi}) +  n(1-\bar{\pi})\Bigg(\log\bigg(\frac{1 - \bar{\pi}}{1 - e^{-\mu}}\bigg) - \mu\Bigg) + n\bar{y}\log \mu \\
-            &= n\Big[\bar{y}\log \mu - (1-\bar{\pi})\big(\log(1-e^{-\mu}) + \mu \big)\Big] + n \bar{\pi}\log(\bar{\pi}) + n(1-\bar{\pi})\log(1-\bar{\pi}).
+\ell_p(\mu) &= \ell(\mu, \hat{\rho}_{\mu}) \\
+            &= n \bar{\rho}\log\Big(\hat{\rho}_{\mu} + (1 - \hat{\rho}_{\mu})e^{-\mu}\Big) +  n(1-\bar{\rho})\big(\log(1-\hat{\rho}_{\mu}) - \mu\big) + n\bar{y}\log \mu \\
+            &= n \bar{\rho}\log(\bar{\rho}) +  n(1-\bar{\rho})\Bigg(\log\bigg(\frac{1 - \bar{\rho}}{1 - e^{-\mu}}\bigg) - \mu\Bigg) + n\bar{y}\log \mu \\
+            &= n\Big[\bar{y}\log \mu - (1-\bar{\rho})\big(\log(1-e^{-\mu}) + \mu \big)\Big] + n \bar{\rho}\log(\bar{\rho}) + n(1-\bar{\rho})\log(1-\bar{\rho}).
 \end{aligned}
 $${#eq-3-2-16}
 As usual, we can discard the terms not depending on $\mu$, yielding 
 $$
-\ell_p(\mu) = n\Big[\bar{y}\log \mu - (1-\bar{\pi})\big(\log(1-e^{-\mu}) + \mu \big)\Big].
+\ell_p(\mu) = n\Big[\bar{y}\log \mu - (1-\bar{\rho})\big(\log(1-e^{-\mu}) + \mu \big)\Big].
 $${#eq-3-2-17}
+
+### Integrated Likelihood
+
+$$
+\begin{aligned}
+L(\mu, \rho; y_{\bullet}) &= \exp\Big\{\ell(\mu, \rho; y_{\bullet})\Big\} \\
+                          &= \exp\bigg\{n \bar{\rho}\log\Big(\rho + (1 - \rho)e^{-\mu}\Big) +  n(1-\bar{\rho})\big(\log(1-\rho) - \mu\big) + n\bar{y}\log \mu\bigg\} \\
+                          &= \Big[\rho + (1 - \rho)e^{-\mu} \Big]^{n\bar{\rho}}\Big[(1 - \rho)e^{-\mu} \Big]^{n(1-\bar{\rho})}\mu^{n \bar{y}}.
+\end{aligned}
+$$
+
+$$
+\frac{\partial \ell(\mu, \pi)}{\partial\pi} = n\Bigg[\frac{\bar{\pi}(1 - e^{-\mu})}{\pi + (1-\pi)e^{-\mu}} - \frac{1 - \bar{\pi}}{1 - \pi}\Bigg].
+$$
+$$
+\begin{aligned}
+\text{E}(\bar{\rho}) &= \text{E}\Bigg(\frac{1}{n}\sum_{i=1}^n \mathbbm{1}_{Y_i = 0}\Bigg) \\
+                     &= \frac{1}{n}\sum_{i=1}^n \text{E}\big(\mathbbm{1}_{Y_i = 0}\big) \\
+                     &= \frac{1}{n}\sum_{i=1}^n \text{P}(Y_i = 0) \\
+                     &= \frac{1}{n}\sum_{i=1}^n \rho + (1 - \rho)e^{-\mu} \\
+                     &= \frac{1}{n}\cdot n \cdot (\rho + (1 - \rho)e^{-\mu}) \\
+                     &= \rho + (1 - \rho)e^{-\mu}.
+\end{aligned}
+$$
+
+$$
+\text{E}(\bar{\rho}; \hat{\mu}, \phi) \equiv \text{E}(\bar{\rho}; \mu_0, \rho_0)\Big|_{(\mu_0, \rho_0) = (\hat{\mu}, \phi)} = \phi + (1 - \phi)e^{-\hat{\mu}}.
+$$
+
+
 
 

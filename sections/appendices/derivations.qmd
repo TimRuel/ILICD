@@ -1,111 +1,181 @@
 ## Theorems
 
 \begin{theorem}
-Suppose we observe a sample of counts $y_1, ..., y_n$ independently and identically distributed according to a zero-inflated Poisson random variable with parameters $\mu$ and $\pi$, where $\mu > 0$ is the expected Poisson count and $\pi \in [0, 1)$ is the probability of excess zero counts. Let $\bar{\pi} = \frac{1}{n}\sum_{i=1}^n \mathbbm{1}_{y_i = 0}$ represent the proportion of observed zero counts in the sample. Then the partial-MLE for $\pi$ given a particular value of $\mu$ is given by 
+Suppose we observe a sample of counts $y_1, ..., y_n$ independently and identically distributed according to a zero-inflated Poisson random variable with parameters $\mu$ and $\rho$, where $\mu > 0$ is the expected Poisson count and $\rho \in [0, 1)$ is the probability of excess zero counts. Let $\bar{\rho} = \frac{1}{n}\sum_{i=1}^n \mathbbm{1}_{y_i = 0}$ represent the proportion of observed zero counts in the sample. Then the partial-MLE for $\rho$ given a particular value of $\mu$ is given by 
 $$
-\hat{\pi}_{\mu} = \begin{cases}
-                \frac{\bar{\pi} - e^{-\mu}}{1 - e^{-\mu}}, & \bar{\pi} \geq e^{-\mu} \\
-                0, & \bar{\pi} < e^{-\mu}
+\hat{\rho}_{\mu} = \begin{cases}
+                \frac{\bar{\rho} - e^{-\mu}}{1 - e^{-\mu}}, & e^{-\mu} \leq \bar{\rho} \leq 1 \\
+                0, & 0 \leq \bar{\rho} < e^{-\mu}
                 \end{cases}
 $$
 \end{theorem}
 \begin{proof}
 The log-likelihood function of the model is 
 $$
-\ell(\mu, \pi) = n \bar{\pi}\log\Big(\pi + (1 - \pi)e^{-\mu}\Big) +  n(1-\bar{\pi})\big(\log(1-\pi) - \mu\big) + n\bar{y}\log \mu; \> \> \mu > 0, \> \pi \in [0,1),
+\ell(\mu, \rho) = n \bar{\rho}\log\Big(\rho + (1 - \rho)e^{-\mu}\Big) +  n(1-\bar{\rho})\big(\log(1-\rho) - \mu\big) + n\bar{y}\log \mu; \> \> \mu > 0, \> \rho \in [0,1),
 $$ 
-where $\bar{y} = \frac{1}{n}\sum_{i=1}^n y_i$ denotes the sample mean. This definition artificially restricts the domain of the input $\pi$ to the interval $[0,1)$ to reflect the interpretation of $\pi$ as a probability. Since there is no way to interpret a complex-valued log-likelihood, the $\log(1-\pi)$ expression in the second term above explicitly prohibits values of $\pi \geq 1$ from being passed to $\ell$. However, it is still possible to plug in some values of $\pi < 0$ to $\ell$ and obtain a real number. All that is needed to ensure $\ell$ remains real-valued is for the $\pi + (1 - \pi)e^{-\mu}$ expression inside the logarithm in the first term of the formula to remain positive; there are some negative values of $\pi$ which satisfy this condition.
+where $\bar{y} = \frac{1}{n}\sum_{i=1}^n y_i$ denotes the sample mean. This definition artificially restricts the domain of the input $\rho$ to the interval $[0,1)$ to reflect the interpretation of $\rho$ as a probability. Since there is no way to interpret a complex-valued log-likelihood, the $\log(1-\rho)$ expression in the second term above explicitly prohibits values of $\rho \geq 1$ from being passed to $\ell$. However, it is still possible to plug in some values of $\rho < 0$ to $\ell$ and obtain a real number. All that is needed to ensure $\ell$ remains real-valued is for the $\rho + (1 - \rho)e^{-\mu}$ expression inside the logarithm in the first term of the formula to remain positive; there are some negative values of $\rho$ which satisfy this condition.
 \begin{claim}
-$\pi + (1 - \pi)e^{-\mu} > 0$ if and only if $\pi > \frac{1}{1 - e^{\mu}}$.
+$\rho + (1 - \rho)e^{-\mu} > 0$ if and only if $\rho > \frac{1}{1 - e^{\mu}}$.
 \end{claim}
 \begin{claimproof}
 Note that $\mu > 0 \implies 0 < e^{-\mu} < 1$. Then we have
 $$
 \begin{aligned}
-\pi + (1 - \pi)e^{-\mu} > 0 &\iff \pi  - \pi e^{-\mu} + e^{-\mu} > 0 \\ 
-                            &\iff \pi (1 - e^{-\mu}) + e^{-\mu} > 0 \\
-                            &\iff \pi > -\frac{e^{-\mu}}{1-e^{-\mu}} \\
-                            &\iff \pi > \frac{e^{-\mu}}{e^{-\mu} - 1} \\
-                            &\iff \pi > \frac{e^{-\mu}}{e^{-\mu} - 1} \cdot \frac{e^{\mu}}{e^{\mu}} \\
-                            &\iff\pi > \frac{1}{1 - e^{\mu}}.
+\rho + (1 - \rho)e^{-\mu} > 0 &\iff \rho  - \rho e^{-\mu} + e^{-\mu} > 0 \\ 
+                            &\iff \rho (1 - e^{-\mu}) + e^{-\mu} > 0 \\
+                            &\iff \rho > -\frac{e^{-\mu}}{1-e^{-\mu}} \\
+                            &\iff \rho > \frac{e^{-\mu}}{e^{-\mu} - 1} \\
+                            &\iff \rho > \frac{e^{-\mu}}{e^{-\mu} - 1} \cdot \frac{e^{\mu}}{e^{\mu}} \\
+                            &\iff\rho > \frac{1}{1 - e^{\mu}}.
 \end{aligned}
 $$
 $\text{}$
 \end{claimproof}
-Define the function $l^*$ by extending $\ell$ to include values of $\pi$ in the interval $\Big(\frac{1}{1 - e^{\mu}}, \> 1\Big)$, i.e.
+Define the function $l^*$ by extending $\ell$ to include values of $\rho$ in the interval $\Big(\frac{1}{1 - e^{\mu}}, \> 1\Big)$, i.e.
 $$
-\ell^*(\mu, \pi) = n \bar{\pi}\log\Big(\pi + (1 - \pi)e^{-\mu}\Big) +  n(1-\bar{\pi})\big(\log(1-\pi) - \mu\big) + n\bar{y}\log \mu; \> \> \mu > 0, \> \frac{1}{1 - e^{\mu}} < \pi < 1.
+\ell^*(\mu, \rho) = n \bar{\rho}\log\Big(\rho + (1 - \rho)e^{-\mu}\Big) +  n(1-\bar{\rho})\big(\log(1-\rho) - \mu\big) + n\bar{y}\log \mu; \> \> \mu > 0, \> \frac{1}{1 - e^{\mu}} < \rho < 1.
 $$ 
 \begin{claim}
-For a given value of $\mu$, the value of $\pi$ that maximizes $\ell^*(\mu, \pi)$ is $\frac{\bar{\pi} - e^{-\mu}}{1 - e^{-\mu}}$.
+For a given value of $\mu$, the value of $\rho$ that maximizes $\ell^*(\mu, \rho)$ is $\frac{\bar{\rho} - e^{-\mu}}{1 - e^{-\mu}}$.
 \end{claim}
 \begin{claimproof}
-Let $\hat{\pi}_{\mu}^*$ denote the the value of $\pi$ that maximizes $\ell^*(\mu, \pi)$ for a given value of $\mu$. Under suitable regularity conditions, easily satisfied in this case since the Poisson distribution belongs to the well-behaved exponential family of distributions, $\hat{\pi}_{\mu}^*$ is guaranteed to exist and will be the unique value of $\pi$ (as a function of $\mu$ and the data) that solves the critical point equation 
+Let $\hat{\rho}_{\mu}^*$ denote the the value of $\rho$ that maximizes $\ell^*(\mu, \rho)$ for a given value of $\mu$. Under suitable regularity conditions, easily satisfied in this case since the Poisson distribution belongs to the well-behaved exponential family of distributions, $\hat{\rho}_{\mu}^*$ is guaranteed to exist and will be the unique value of $\rho$ (as a function of $\mu$ and the data) that solves the critical point equation 
 $$
-\frac{\partial \ell^*(\mu, \pi)}{\partial\pi}\Bigg|_{\pi = \hat{\pi}_{\mu}^*} \equiv 0.
+\frac{\partial \ell^*(\mu, \rho)}{\partial\rho}\Bigg|_{\rho = \hat{\rho}_{\mu}^*} \equiv 0.
 $$ 
-Hence, we must differentiate $\ell^*$ with respect to $\pi$, evaluate the derivative at $\pi = \hat{\pi}_{\mu}^*$, and set the result equal to $0$. Doing so and then solving for $\hat{\pi}_{\mu}^*$ yields
+Hence, we must differentiate $\ell^*$ with respect to $\rho$, evaluate the derivative at $\rho = \hat{\rho}_{\mu}^*$, and set the result equal to $0$. Doing so and then solving for $\hat{\rho}_{\mu}^*$ yields
 $$
 \begin{aligned}
-0 \equiv \frac{\partial \ell^*(\mu, \pi)}{\partial\pi}\Bigg|_{\pi = \hat{\pi}_{\mu}^*} &= \frac{n \bar{\pi}}{\hat{\pi}_{\mu}^* + (1-\hat{\pi}_{\mu}^*)e^{-\mu}}(1 - e^{-\mu}) - \frac{n(1 - \bar{\pi})}{1 - \hat{\pi}_{\mu}^*} = n \Bigg[\frac{\bar{\pi}(1 - e^{-\mu})}{\hat{\pi}_{\mu}^* + (1-\hat{\pi}_{\mu}^*)e^{-\mu}} - \frac{1 - \bar{\pi}}{1 - \hat{\pi}_{\mu}^*} \Bigg]. \\
-&\implies \frac{\bar{\pi}(1 - e^{-\mu})}{\hat{\pi}_{\mu}^* + (1-\hat{\pi}_{\mu}^*)e^{-\mu}} - \frac{1 - \bar{\pi}}{1 - \hat{\pi}_{\mu}^*} = 0 \\
-&\implies \frac{\bar{\pi}(1 - e^{-\mu})}{\hat{\pi}_{\mu}^* + (1-\hat{\pi}_{\mu}^*)e^{-\mu}} = \frac{1 - \bar{\pi}}{1 - \hat{\pi}_{\mu}^*}  \\
-&\implies \frac{(1 - \hat{\pi}_{\mu}^*)(1 - e^{-\mu})}{\hat{\pi}_{\mu}^* + (1-\hat{\pi}_{\mu}^*)e^{-\mu}} = \frac{1 - \bar{\pi}}{\bar{\pi}} \\
-&\implies \frac{\hat{\pi}_{\mu}^* + (1-\hat{\pi}_{\mu}^*)e^{-\mu}}{(1 - \hat{\pi}_{\mu}^*)(1 - e^{-\mu})} = \frac{\bar{\pi}}{1 - \bar{\pi}} \\
-&\implies \frac{\hat{\pi}_{\mu}^*}{(1 - \hat{\pi}_{\mu}^*)(1 - e^{-\mu})} + \frac{(1-\hat{\pi}_{\mu}^*)e^{-\mu}}{(1 - \hat{\pi}_{\mu}^*)(1 - e^{-\mu})} = \frac{\bar{\pi}}{1 - \bar{\pi}} \\
-&\implies \frac{\hat{\pi}_{\mu}^*}{(1 - \hat{\pi}_{\mu}^*)(1 - e^{-\mu})} = \frac{\bar{\pi}}{1 - \bar{\pi}} - \frac{e^{-\mu}}{1 - e^{-\mu}} \\
-&\implies \frac{\hat{\pi}_{\mu}^*}{1 - \hat{\pi}_{\mu}^*} = \frac{\bar{\pi}}{1 - \bar{\pi}}(1 - e^{-\mu}) - e^{-\mu} \\
-&\implies \hat{\pi}_{\mu}^* = \frac{\frac{\bar{\pi}}{1 - \bar{\pi}}(1 - e^{-\mu}) - e^{-\mu}}{\frac{\bar{\pi}}{1 - \bar{\pi}}(1 - e^{-\mu}) - e^{-\mu} + 1} \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \bigg(\frac{A}{1-A} = B \iff A = \frac{B}{B + 1}\bigg)\\
-&\implies \hat{\pi}_{\mu}^* = \frac{\frac{\bar{\pi}}{1 - \bar{\pi}}(1 - e^{-\mu}) - e^{-\mu}}{\frac{\bar{\pi}}{1 - \bar{\pi}}(1 - e^{-\mu}) + (1 - e^{-\mu})} \\
-&\implies \hat{\pi}_{\mu}^* = \frac{\frac{\bar{\pi}}{1 - \bar{\pi}}(1 - e^{-\mu}) - e^{-\mu}}{(\frac{\bar{\pi}}{1 - \bar{\pi}} + 1)(1 - e^{-\mu})} \\
-&\implies \hat{\pi}_{\mu}^* = \frac{\frac{\bar{\pi}}{1 - \bar{\pi}}(1 - e^{-\mu}) - e^{-\mu}}{\frac{1}{1 - \bar{\pi}}(1 - e^{-\mu})} \\
-&\implies \hat{\pi}_{\mu}^* = \frac{\bar{\pi}(1 - e^{-\mu}) - (1 - \bar{\pi})e^{-\mu}}{1 - e^{-\mu}} \\
-&\implies \hat{\pi}_{\mu}^* = \frac{\bar{\pi} - e^{-\mu}}{1 - e^{-\mu}}.
+0 \equiv \frac{\partial \ell^*(\mu, \rho)}{\partial\rho}\Bigg|_{\rho = \hat{\rho}_{\mu}^*} &= \frac{n \bar{\rho}}{\hat{\rho}_{\mu}^* + (1-\hat{\rho}_{\mu}^*)e^{-\mu}}(1 - e^{-\mu}) - \frac{n(1 - \bar{\rho})}{1 - \hat{\rho}_{\mu}^*} = n \Bigg[\frac{\bar{\rho}(1 - e^{-\mu})}{\hat{\rho}_{\mu}^* + (1-\hat{\rho}_{\mu}^*)e^{-\mu}} - \frac{1 - \bar{\rho}}{1 - \hat{\rho}_{\mu}^*} \Bigg]. \\
+&\implies \frac{\bar{\rho}(1 - e^{-\mu})}{\hat{\rho}_{\mu}^* + (1-\hat{\rho}_{\mu}^*)e^{-\mu}} - \frac{1 - \bar{\rho}}{1 - \hat{\rho}_{\mu}^*} = 0 \\
+&\implies \frac{\bar{\rho}(1 - e^{-\mu})}{\hat{\rho}_{\mu}^* + (1-\hat{\rho}_{\mu}^*)e^{-\mu}} = \frac{1 - \bar{\rho}}{1 - \hat{\rho}_{\mu}^*}  \\
+&\implies \frac{(1 - \hat{\rho}_{\mu}^*)(1 - e^{-\mu})}{\hat{\rho}_{\mu}^* + (1-\hat{\rho}_{\mu}^*)e^{-\mu}} = \frac{1 - \bar{\rho}}{\bar{\rho}} \\
+&\implies \frac{\hat{\rho}_{\mu}^* + (1-\hat{\rho}_{\mu}^*)e^{-\mu}}{(1 - \hat{\rho}_{\mu}^*)(1 - e^{-\mu})} = \frac{\bar{\rho}}{1 - \bar{\rho}} \\
+&\implies \frac{\hat{\rho}_{\mu}^*}{(1 - \hat{\rho}_{\mu}^*)(1 - e^{-\mu})} + \frac{(1-\hat{\rho}_{\mu}^*)e^{-\mu}}{(1 - \hat{\rho}_{\mu}^*)(1 - e^{-\mu})} = \frac{\bar{\rho}}{1 - \bar{\rho}} \\
+&\implies \frac{\hat{\rho}_{\mu}^*}{(1 - \hat{\rho}_{\mu}^*)(1 - e^{-\mu})} = \frac{\bar{\rho}}{1 - \bar{\rho}} - \frac{e^{-\mu}}{1 - e^{-\mu}} \\
+&\implies \frac{\hat{\rho}_{\mu}^*}{1 - \hat{\rho}_{\mu}^*} = \frac{\bar{\rho}}{1 - \bar{\rho}}(1 - e^{-\mu}) - e^{-\mu} \\
+&\implies \hat{\rho}_{\mu}^* = \frac{\frac{\bar{\rho}}{1 - \bar{\rho}}(1 - e^{-\mu}) - e^{-\mu}}{\frac{\bar{\rho}}{1 - \bar{\rho}}(1 - e^{-\mu}) - e^{-\mu} + 1} \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \bigg(\frac{A}{1-A} = B \iff A = \frac{B}{B + 1}\bigg)\\
+&\implies \hat{\rho}_{\mu}^* = \frac{\frac{\bar{\rho}}{1 - \bar{\rho}}(1 - e^{-\mu}) - e^{-\mu}}{\frac{\bar{\rho}}{1 - \bar{\rho}}(1 - e^{-\mu}) + (1 - e^{-\mu})} \\
+&\implies \hat{\rho}_{\mu}^* = \frac{\frac{\bar{\rho}}{1 - \bar{\rho}}(1 - e^{-\mu}) - e^{-\mu}}{(\frac{\bar{\rho}}{1 - \bar{\rho}} + 1)(1 - e^{-\mu})} \\
+&\implies \hat{\rho}_{\mu}^* = \frac{\frac{\bar{\rho}}{1 - \bar{\rho}}(1 - e^{-\mu}) - e^{-\mu}}{\frac{1}{1 - \bar{\rho}}(1 - e^{-\mu})} \\
+&\implies \hat{\rho}_{\mu}^* = \frac{\bar{\rho}(1 - e^{-\mu}) - (1 - \bar{\rho})e^{-\mu}}{1 - e^{-\mu}} \\
+&\implies \hat{\rho}_{\mu}^* = \frac{\bar{\rho} - e^{-\mu}}{1 - e^{-\mu}}.
 \end{aligned} 
 $$ 
 $\text{}$
 \end{claimproof}
 \begin{claim}
-When $\bar{\pi} \geq e^{-\mu}$, the value of $\pi$ that maximizes $\ell(\mu, \pi)$ for a given value of $\mu$ is $\hat{\pi}_{\mu}^* = \frac{\bar{\pi} - e^{-\mu}}{1 - e^{-\mu}}$.
+For a given value of $\mu$, if $\bar{\rho} \geq e^{-\mu}$, the value of $\rho$ that maximizes $\ell(\mu, \rho)$ is $\hat{\rho}_{\mu}^* = \frac{\bar{\rho} - e^{-\mu}}{1 - e^{-\mu}}$.
 \end{claim}
 \begin{claimproof}
-Note that $\bar{\pi} \geq e^{-\mu} \implies \hat{\pi}_{\mu}^* \geq 0$. Since $\ell(\mu, \pi) = \ell^*(\mu, \pi)$ for any value of $\pi \in [0, 1)$, the claim follows from the previous one.
+Note that $\bar{\rho} \geq e^{-\mu} \implies \hat{\rho}_{\mu}^* \geq 0$. Since $\ell(\mu, \rho) = \ell^*(\mu, \rho)$ for any value of $\rho \in [0, 1)$, the claim follows from the previous one.
 \end{claimproof}
 \begin{claim}
-$\pi + (1-\pi)e^{-\mu} \geq e^{-\mu}$ for all $\pi \in [0,1)$ and $\mu > 0$.
+$\rho + (1-\rho)e^{-\mu} \geq e^{-\mu}$ for all $\rho \in [0,1)$ and $\mu > 0$.
 \end{claim}
 \begin{claimproof}
-Let $h(\pi) = \pi + (1 - \pi)e^{-\mu}$ for $\pi \in [0,1)$. Note that $h'(\pi) = 1 - e^{-\mu}$ for all values of $\pi$. $\mu > 0 \implies e^{-\mu} > 1 \implies 1-e^{-\mu} > 0$. Thus, $h'(\pi) > 0$ and so $h(\pi)$ is a strictly increasing function everywhere in its domain. It follows that $h(\pi) \geq h(0) = e^{-\mu}$ for all $\pi \in [0,1)$ and $\mu > 0$.
+Let $h(\rho) = \rho + (1 - \rho)e^{-\mu}$ for $\rho \in [0,1)$. Note that $h'(\rho) = 1 - e^{-\mu}$ for all values of $\rho$. $\mu > 0 \implies e^{-\mu} > 1 \implies 1-e^{-\mu} > 0$. Thus, $h'(\rho) > 0$ and so $h(\rho)$ is a strictly increasing function everywhere in its domain. It follows that $h(\rho) \geq h(0) = e^{-\mu}$ for all $\rho \in [0,1)$ and $\mu > 0$.
 \end{claimproof}
 \begin{claim}
-When $\bar{\pi} < e^{-\mu}$, $\ell(\mu, \pi)$ is strictly decreasing with respect to $\pi$ for a fixed value of $\mu$.
+When $\bar{\rho} < e^{-\mu}$, $\ell(\mu, \rho)$ is strictly decreasing with respect to $\rho$ for a fixed value of $\mu$.
 \end{claim}
 \begin{claimproof}
-The derivative of $\ell$ with respect to $\pi$ is given by 
+The derivative of $\ell$ with respect to $\rho$ is given by 
 $$
-\frac{\partial \ell(\mu, \pi)}{\partial\pi} = n\Bigg[\frac{\bar{\pi}(1 - e^{-\mu})}{\pi + (1-\pi)e^{-\mu}} - \frac{1 - \bar{\pi}}{1 - \pi}\Bigg].
+\frac{\partial \ell(\mu, \rho)}{\partial\rho} = n\Bigg[\frac{\bar{\rho}(1 - e^{-\mu})}{\rho + (1-\rho)e^{-\mu}} - \frac{1 - \bar{\rho}}{1 - \rho}\Bigg].
 $$
 Note that
 $$
 \begin{aligned}
-\frac{\bar{\pi}(1 - e^{-\mu})}{\pi + (1-\pi)e^{-\mu}} - \frac{1 - \bar{\pi}}{1 - \pi} &= \frac{\bar{\pi}(1 - e^{-\mu})}{\pi + (1-\pi)e^{-\mu}} + \frac{\bar{\pi} - 1}{1 - \pi} \\
-                                                                                      &< \frac{e^{-\mu}(1 - e^{-\mu})}{\pi + (1-\pi)e^{-\mu}} + \frac{e^{-\mu} - 1}{1 - \pi} && (\text{by assumption}) \\
-                                                                                      &\leq \frac{e^{-\mu}(1 - e^{-\mu})}{e^{-\mu}} + \frac{e^{-\mu} - 1}{1 - \pi} && (\text{by Claim 1.4}) \\
-                                                                                      &= 1- e^{-\mu} + \frac{e^{-\mu} - 1}{1 - \pi} \\
-                                                                                      &= (1 - e^{-\mu})\bigg(1 - \frac{1}{1 - \pi}\bigg) \\
-                                                                                      &= (1 - e^{-\mu})\bigg(-\frac{\pi}{1-\pi}\bigg) \\
+\frac{\bar{\rho}(1 - e^{-\mu})}{\rho + (1-\rho)e^{-\mu}} - \frac{1 - \bar{\rho}}{1 - \rho} &= \frac{\bar{\rho}(1 - e^{-\mu})}{\rho + (1-\rho)e^{-\mu}} + \frac{\bar{\rho} - 1}{1 - \rho} \\
+                                                                                      &< \frac{e^{-\mu}(1 - e^{-\mu})}{\rho + (1-\rho)e^{-\mu}} + \frac{e^{-\mu} - 1}{1 - \rho} && (\text{by assumption}) \\
+                                                                                      &\leq \frac{e^{-\mu}(1 - e^{-\mu})}{e^{-\mu}} + \frac{e^{-\mu} - 1}{1 - \rho} && (\text{by Claim 1.4}) \\
+                                                                                      &= 1- e^{-\mu} + \frac{e^{-\mu} - 1}{1 - \rho} \\
+                                                                                      &= (1 - e^{-\mu})\bigg(1 - \frac{1}{1 - \rho}\bigg) \\
+                                                                                      &= (1 - e^{-\mu})\bigg(-\frac{\rho}{1-\rho}\bigg) \\
                                                                                       &\leq 0.
 \end{aligned}
 $$
-Hence, $\frac{\partial \ell(\mu, \pi)}{\partial\pi} <0$ for all $\pi \in [0, 1)$ when $\bar{\pi} < e^{-\mu}$, and so the claim is proved.
+Hence, $\frac{\partial \ell(\mu, \rho)}{\partial\rho} <0$ for all $\rho \in [0, 1)$ when $\bar{\rho} < e^{-\mu}$, and so the claim is proved.
 \end{claimproof}
 \begin{claim}
-When $\bar{\pi} < e^{-\mu}$, the value of $\pi$ that maximizes $\ell(\mu, \pi)$ for a given value of $\mu$ is $0$.
+When $\bar{\rho} < e^{-\mu}$, the value of $\rho$ that maximizes $\ell(\mu, \rho)$ for a given value of $\mu$ is $0$.
 \end{claim}
 \begin{claimproof}
-Assume $\bar{\pi} < e^{-\mu}$. This implies $\hat{\pi}_{\mu}^* < 0$ and therefore is not a valid input for $\pi$ to $\ell(\mu, \pi)$. By Claim 1.5, $\ell(\mu, \pi)$ is strictly decreasing with respect to $\pi$ for a fixed value of $\mu$. Thus, $\ell(\mu, 0) \geq \ell(\mu, \pi)$ for all $\pi \in [0, 1)$ with equality if and only if $\pi = 0$. Hence, $\pi = 0$ maximizes $\ell(\mu, \pi)$ for a given value of $\mu$, and so the claim is proved.
+Assume $\bar{\rho} < e^{-\mu}$. This implies $\hat{\rho}_{\mu}^* < 0$ and therefore is not a valid input for $\rho$ to $\ell(\mu, \rho)$. By Claim 1.5, $\ell(\mu, \rho)$ is strictly decreasing with respect to $\rho$ for a fixed value of $\mu$. Thus, $\ell(\mu, 0) \geq \ell(\mu, \rho)$ for all $\rho \in [0, 1)$ with equality if and only if $\rho = 0$. Hence, $\rho = 0$ maximizes $\ell(\mu, \rho)$ for a given value of $\mu$, and so the claim is proved.
 \end{claimproof}
 Together, Claim 1.3 and Claim 1.6 establish the result in the theorem.
+\end{proof}
+
+\begin{theorem}
+Suppose we observe a sample of counts $y_1, ..., y_n$ independently and identically distributed according to a zero-inflated Poisson random variable with parameters $\mu$ and $\rho$, where $\mu > 0$ is the expected Poisson count and $\rho \in [0, 1)$ is the probability of excess zero counts. Let $\bar{y} = \frac{1}{n}\sum_{i=1}^n y_i$ denote the sample mean, $\bar{\rho} = \frac{1}{n}\sum_{i=1}^n \mathbbm{1}_{y_i = 0}$ the proportion of observed zero counts in the sample, and $\gamma = \frac{\bar{y}}{1 - \bar{\rho}}$. Then the maximum likelihood estimators for $\mu$ and $\rho$ are given by 
+
+$$
+\hat{\mu} = \begin{cases}
+              W_0(-\gamma e^{-\gamma}) + \gamma, & \bar{\rho} > 0 \\
+              \bar{y}, & \bar{\rho} = 0
+              \end{cases}
+$$
+and
+$$
+\hat{\rho} = \begin{cases}
+              \frac{\bar{\rho} - e^{-\hat{\mu}}}{1 - e^{-\hat{\mu}}}, & \bar{\rho} \geq e^{-\hat{\mu}} \\
+              0, & \bar{\rho} < e^{-\hat{\mu}}
+              \end{cases}
+$$
+\end{theorem}
+
+\begin{proof}
+
+Theorem 1 gave us the formula to find $\hat{\rho}_{\mu}$, the value of $\rho$ that maximizes the log-likelihood function for a given value of $\mu$. Evaluating $\ell$ at this value of $\rho$ yields what is called the profile log-likelihood for $\mu$, $\ell_p(\mu)$. The MLE for $\mu$ will be the value of $\mu$ that maximizes $\ell_p(\mu)$. Once it has been found, the corresponding MLE for $\rho$ can be calculated by plugging $\hat{\mu}$ into our formula for $\hat{\rho}_{\mu}$. 
+
+\begin{claim}
+$\bar{\rho} \geq e^{-\mu} \implies \ell_p(\mu) = n\Big[\bar{y}\log \mu - (1-\bar{\rho})\big(\log(1-e^{-\mu}) + \mu \big)\Big].$
+\end{claim}
+
+\begin{claimproof}
+From Theorem 1, $\bar{\rho} \geq e^{-\hat{\mu}} \implies \hat{\rho}_{\mu} = \frac{\bar{\rho} - e^{-\mu}}{1 - e^{-\mu}}.$ It follows that 
+$$
+1 - \hat{\rho}_{\mu} = \frac{1 - e^{-\mu}}{1 - e^{-\mu}} - \frac{\bar{\rho} - e^{-\mu}}{1 - e^{-\mu}} = \frac{1-e^{-\mu} - \bar{\rho} + e^{-\mu}}{1 - e^{-\mu}} = \frac{1 - \bar{\rho}}{1 - e^{-\mu}}.
+$$
+and
+$$
+\hat{\rho}_{\mu} + (1 - \hat{\rho}_{\mu})e^{-\mu} = \frac{\bar{\rho} - e^{-\mu}}{1 - e^{-\mu}} + \frac{1 - \bar{\rho}}{1 - e^{-\mu}}e^{-\mu} = \frac{\bar{\rho}(1 - e^{-\mu})}{1 - e^{-\mu}}  = \bar{\rho}.
+$$
+Thus,
+$$
+\begin{aligned}
+\ell_p(\mu) &= \ell(\mu, \hat{\rho}_{\mu}) \\
+            &= n \bar{\rho}\log\Big(\hat{\rho}_{\mu} + (1 - \hat{\rho}_{\mu})e^{-\mu}\Big) +  n(1-\bar{\rho})\big(\log(1-\hat{\rho}_{\mu}) - \mu\big) + n\bar{y}\log \mu \\
+            &= n \bar{\rho}\log(\bar{\rho}) +  n(1-\bar{\rho})\Bigg(\log\bigg(\frac{1 - \bar{\rho}}{1 - e^{-\mu}}\bigg) - \mu\Bigg) + n\bar{y}\log \mu \\
+            &= n\Big[\bar{y}\log \mu - (1-\bar{\rho})\big(\log(1-e^{-\mu}) + \mu \big)\Big] + n \bar{\rho}\log(\bar{\rho}) + n(1-\bar{\rho})\log(1-\bar{\rho}).
+\end{aligned}
+$$
+Discarding the final two terms as they don't depend on $\mu$ yields the expression for $\ell_p(\mu)$ given in the claim.
+\end{claimproof}
+
+\begin{claim}
+
+\end{claim}
+
+\begin{claim}
+$\bar{\rho} < e^{-\mu} \implies \ell_p(\mu) = n(\bar{y} \log \mu - \mu).$
+\end{claim}
+
+\begin{claimproof}
+From Theorem 1, $\bar{\rho} < e^{-\mu} \implies \hat{\rho}_{\mu} = 0.$ Thus, 
+$$
+\begin{aligned}
+\ell_p(\mu) &= \ell(\mu, \hat{\rho}_{\mu}) \\
+            &= n \bar{\rho}\log\Big(\hat{\rho}_{\mu} + (1 - \hat{\rho}_{\mu})e^{-\mu}\Big) +  n(1-\bar{\rho})\big(\log(1-\hat{\rho}_{\mu}) - \mu\big) + n\bar{y}\log \mu \\
+            &= n \bar{\rho}\log(e^{-\mu}) +  n(1-\bar{\rho})\big(\log(1) - \mu\big) + n\bar{y}\log \mu \\
+            &= - n\bar{\rho}\mu - n(1-\bar{\rho})\mu + n\bar{y}\log \mu\\
+            &= n(\bar{y} \log \mu - \mu).
+\end{aligned}
+$$
+
+\end{claimproof}
 \end{proof}
 
 

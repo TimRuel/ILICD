@@ -21,6 +21,7 @@ book:
     - ./sections/appendices/derivations.qmd
 
 bibliography: references.bib
+csl: diabetologia.csl
 nocite: |
   @*
 
