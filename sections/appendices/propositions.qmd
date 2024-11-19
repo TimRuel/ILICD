@@ -1,0 +1,457 @@
+## Propositions
+
+\begin{prop}
+Suppose we observe a sample of counts $y_1, ..., y_n$ independently and identically distributed according to a zero-inflated Poisson random variable with parameters $\mu$ and $\rho$, where $\mu > 0$ is the expected Poisson count and $\rho \in [0, 1)$ is the probability of excess zero counts. Let $\bar{\rho} = \frac{1}{n}\sum_{i=1}^n \mathbbm{1}_{y_i = 0}$ represent the proportion of observed zero counts in the sample. Then the partial-MLE for $\rho$ given a particular value of $\mu$ is given by 
+$$
+\hat{\rho}_{\mu} = \begin{cases}
+                \frac{\bar{\rho} - e^{-\mu}}{1 - e^{-\mu}}, & e^{-\mu} < \bar{\rho} \leq 1 \\
+                0, & 0 \leq \bar{\rho} \leq e^{-\mu}
+                \end{cases}
+$$
+\end{prop}
+
+\begin{prop-proof}[Proof of proposition]
+The log-likelihood function of the model is
+$$
+\ell(\mu, \rho) = n \bar{\rho}\log\Big(\rho + (1 - \rho)e^{-\mu}\Big) +  n(1-\bar{\rho})\big(\log(1-\rho) - \mu\big) + n\bar{y}\log \mu; \> \> \mu > 0, \> \rho \in [0,1),
+$$
+where $\bar{y} = \frac{1}{n}\sum_{i=1}^n y_i$ denotes the sample mean. This definition artificially restricts the domain of the input $\rho$ to the interval $[0,1)$ to reflect the interpretation of $\rho$ as a probability. Since there is no way to interpret a complex-valued log-likelihood, the $\log(1-\rho)$ expression in the second term above explicitly prohibits values of $\rho \geq 1$ from being passed to $\ell$. However, it is still possible to plug in some values of $\rho < 0$ to $\ell$ and obtain a real number. All that is needed to ensure $\ell$ remains real-valued is for the $\rho + (1 - \rho)e^{-\mu}$ expression inside the logarithm in the first term of the formula to remain positive; there are some negative values of $\rho$ which satisfy this condition.
+\begin{claim}
+$\rho + (1 - \rho)e^{-\mu} > 0$ if and only if $\rho > \frac{1}{1 - e^{\mu}}$.
+\end{claim}
+\begin{claimproof}[Proof of claim]
+Note that $\mu > 0 \implies 0 < e^{-\mu} < 1$. Then we have
+$$
+\begin{aligned}
+\rho + (1 - \rho)e^{-\mu} > 0 &\iff \rho  - \rho e^{-\mu} + e^{-\mu} > 0 \\
+                            &\iff \rho (1 - e^{-\mu}) + e^{-\mu} > 0 \\
+                            &\iff \rho > -\frac{e^{-\mu}}{1-e^{-\mu}} \\
+                            &\iff \rho > \frac{e^{-\mu}}{e^{-\mu} - 1} \\
+                            &\iff \rho > \frac{e^{-\mu}}{e^{-\mu} - 1} \cdot \frac{e^{\mu}}{e^{\mu}} \\
+                            &\iff\rho > \frac{1}{1 - e^{\mu}}.
+\end{aligned}
+$$
+\end{claimproof}
+Define the function $l^*$ by extending $\ell$ to include values of $\rho$ in the interval $\Big(\frac{1}{1 - e^{\mu}}, \> 1\Big)$, i.e.
+$$
+\ell^*(\mu, \rho) = n \bar{\rho}\log\Big(\rho + (1 - \rho)e^{-\mu}\Big) +  n(1-\bar{\rho})\big(\log(1-\rho) - \mu\big) + n\bar{y}\log \mu; \> \> \mu > 0, \> \frac{1}{1 - e^{\mu}} < \rho < 1.
+$$
+\begin{claim}
+For a given value of $\mu$, the value of $\rho$ that maximizes $\ell^*(\mu, \rho)$ is $\frac{\bar{\rho} - e^{-\mu}}{1 - e^{-\mu}}$.
+\end{claim}
+\begin{claimproof}[Proof of claim]
+Let $\hat{\rho}_{\mu}^*$ denote the the value of $\rho$ that maximizes $\ell^*(\mu, \rho)$ for a given value of $\mu$. Under suitable regularity conditions, easily satisfied in this case since the Poisson distribution belongs to the well-behaved exponential family of distributions, $\hat{\rho}_{\mu}^*$ is guaranteed to exist and will be the unique value of $\rho$ (as a function of $\mu$ and the data) that solves the critical point equation
+$$
+\frac{\partial \ell^*(\mu, \rho)}{\partial\rho}\Bigg|_{\rho = \hat{\rho}_{\mu}^*} \equiv 0.
+$$
+Hence, we must differentiate $\ell^*$ with respect to $\rho$, evaluate the derivative at $\rho = \hat{\rho}_{\mu}^*$, and set the result equal to $0$. Doing so and then solving for $\hat{\rho}_{\mu}^*$ yields
+$$
+\begin{aligned}
+0 \equiv \frac{\partial \ell^*(\mu, \rho)}{\partial\rho}\Bigg|_{\rho = \hat{\rho}_{\mu}^*} &= \frac{n \bar{\rho}}{\hat{\rho}_{\mu}^* + (1-\hat{\rho}_{\mu}^*)e^{-\mu}}(1 - e^{-\mu}) - \frac{n(1 - \bar{\rho})}{1 - \hat{\rho}_{\mu}^*} = n \Bigg[\frac{\bar{\rho}(1 - e^{-\mu})}{\hat{\rho}_{\mu}^* + (1-\hat{\rho}_{\mu}^*)e^{-\mu}} - \frac{1 - \bar{\rho}}{1 - \hat{\rho}_{\mu}^*} \Bigg]. \\
+&\implies \frac{\bar{\rho}(1 - e^{-\mu})}{\hat{\rho}_{\mu}^* + (1-\hat{\rho}_{\mu}^*)e^{-\mu}} - \frac{1 - \bar{\rho}}{1 - \hat{\rho}_{\mu}^*} = 0 \\
+&\implies \frac{\bar{\rho}(1 - e^{-\mu})}{\hat{\rho}_{\mu}^* + (1-\hat{\rho}_{\mu}^*)e^{-\mu}} = \frac{1 - \bar{\rho}}{1 - \hat{\rho}_{\mu}^*}  \\
+&\implies \frac{(1 - \hat{\rho}_{\mu}^*)(1 - e^{-\mu})}{\hat{\rho}_{\mu}^* + (1-\hat{\rho}_{\mu}^*)e^{-\mu}} = \frac{1 - \bar{\rho}}{\bar{\rho}} \\
+&\implies \frac{\hat{\rho}_{\mu}^* + (1-\hat{\rho}_{\mu}^*)e^{-\mu}}{(1 - \hat{\rho}_{\mu}^*)(1 - e^{-\mu})} = \frac{\bar{\rho}}{1 - \bar{\rho}} \\
+&\implies \frac{\hat{\rho}_{\mu}^*}{(1 - \hat{\rho}_{\mu}^*)(1 - e^{-\mu})} + \frac{(1-\hat{\rho}_{\mu}^*)e^{-\mu}}{(1 - \hat{\rho}_{\mu}^*)(1 - e^{-\mu})} = \frac{\bar{\rho}}{1 - \bar{\rho}} \\
+&\implies \frac{\hat{\rho}_{\mu}^*}{(1 - \hat{\rho}_{\mu}^*)(1 - e^{-\mu})} = \frac{\bar{\rho}}{1 - \bar{\rho}} - \frac{e^{-\mu}}{1 - e^{-\mu}} \\
+&\implies \frac{\hat{\rho}_{\mu}^*}{1 - \hat{\rho}_{\mu}^*} = \frac{\bar{\rho}}{1 - \bar{\rho}}(1 - e^{-\mu}) - e^{-\mu} \\
+&\implies \hat{\rho}_{\mu}^* = \frac{\frac{\bar{\rho}}{1 - \bar{\rho}}(1 - e^{-\mu}) - e^{-\mu}}{\frac{\bar{\rho}}{1 - \bar{\rho}}(1 - e^{-\mu}) - e^{-\mu} + 1} \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \> \bigg(\frac{A}{1-A} = B \iff A = \frac{B}{B + 1}\bigg)\\
+&\implies \hat{\rho}_{\mu}^* = \frac{\frac{\bar{\rho}}{1 - \bar{\rho}}(1 - e^{-\mu}) - e^{-\mu}}{\frac{\bar{\rho}}{1 - \bar{\rho}}(1 - e^{-\mu}) + (1 - e^{-\mu})} \\
+&\implies \hat{\rho}_{\mu}^* = \frac{\frac{\bar{\rho}}{1 - \bar{\rho}}(1 - e^{-\mu}) - e^{-\mu}}{(\frac{\bar{\rho}}{1 - \bar{\rho}} + 1)(1 - e^{-\mu})} \\
+&\implies \hat{\rho}_{\mu}^* = \frac{\frac{\bar{\rho}}{1 - \bar{\rho}}(1 - e^{-\mu}) - e^{-\mu}}{\frac{1}{1 - \bar{\rho}}(1 - e^{-\mu})} \\
+&\implies \hat{\rho}_{\mu}^* = \frac{\bar{\rho}(1 - e^{-\mu}) - (1 - \bar{\rho})e^{-\mu}}{1 - e^{-\mu}} \\
+&\implies \hat{\rho}_{\mu}^* = \frac{\bar{\rho} - e^{-\mu}}{1 - e^{-\mu}}.
+\end{aligned}
+$$
+\end{claimproof}
+\begin{claim}
+For a given value of $\mu$, if $\bar{\rho} > e^{-\mu}$, the value of $\rho$ that maximizes $\ell(\mu, \rho)$ is $\hat{\rho}_{\mu}^* = \frac{\bar{\rho} - e^{-\mu}}{1 - e^{-\mu}}$.
+\end{claim}
+\begin{claimproof}[Proof of claim]
+Note that $\bar{\rho} > e^{-\mu} \implies \hat{\rho}_{\mu}^* > 0$. Since $\ell(\mu, \rho) = \ell^*(\mu, \rho)$ for any value of $\rho \in (0, 1)$, the claim follows from the previous one.
+\end{claimproof}
+\begin{claim}
+$\rho + (1-\rho)e^{-\mu} \geq e^{-\mu}$ for all $\rho \in [0,1)$ and $\mu > 0$, with equality if and only if $\rho = 0$.
+\end{claim}
+\begin{claimproof}[Proof of claim]
+Let $h(\rho) = \rho + (1 - \rho)e^{-\mu}$ for $\rho \in [0,1)$. Note that $h'(\rho) = 1 - e^{-\mu}$. $\mu > 0 \implies e^{-\mu} > 1 \implies 1-e^{-\mu} > 0$. Thus, $h'(\rho) > 0$ and so $h(\rho)$ is a strictly increasing function everywhere in its domain. It follows that $h(\rho) > h(0) = e^{-\mu}$ for all $\rho \in (0,1)$ and $\mu > 0$. Therefore, in general $\rho + (1-\rho)e^{-\mu} \geq e^{-\mu}$ for all $\rho \in [0,1)$ and $\mu > 0$, with equality if and only if $\rho = 0$.
+\end{claimproof}
+\begin{claim}
+For a given value of $\mu$, if $\bar{\rho} \leq e^{-\mu}$, then $\ell(\mu, \rho)$ is stationary at $\rho = 0$ and strictly decreasing with respect to $\rho$ for $\rho \in (0, 1)$.
+\end{claim}
+\begin{claimproof}[Proof of claim]
+The derivative of $\ell$ with respect to $\rho$ is given by
+$$
+\frac{\partial \ell(\mu, \rho)}{\partial\rho} = n\Bigg[\frac{\bar{\rho}(1 - e^{-\mu})}{\rho + (1-\rho)e^{-\mu}} - \frac{1 - \bar{\rho}}{1 - \rho}\Bigg].
+$$
+Note that
+$$
+\begin{aligned}
+\frac{\bar{\rho}(1 - e^{-\mu})}{\rho + (1-\rho)e^{-\mu}} - \frac{1 - \bar{\rho}}{1 - \rho} &= \frac{\bar{\rho}(1 - e^{-\mu})}{\rho + (1-\rho)e^{-\mu}} + \frac{\bar{\rho} - 1}{1 - \rho} \\
+                                                                                      &\leq \frac{e^{-\mu}(1 - e^{-\mu})}{\rho + (1-\rho)e^{-\mu}} + \frac{e^{-\mu} - 1}{1 - \rho} && (\text{by assumption}) \\
+                                                                                      &\leq \frac{e^{-\mu}(1 - e^{-\mu})}{e^{-\mu}} + \frac{e^{-\mu} - 1}{1 - \rho} && (\text{by Claim 1.4}) \\
+                                                                                      &= 1- e^{-\mu} + \frac{e^{-\mu} - 1}{1 - \rho} \\
+                                                                                      &= (1 - e^{-\mu})\bigg(1 - \frac{1}{1 - \rho}\bigg) \\
+                                                                                      &= (1 - e^{-\mu})\bigg(-\frac{\rho}{1-\rho}\bigg) \\
+                                                                                      &\leq 0.
+\end{aligned}
+$$
+Claim 1.4 also tells us that the inequalities become strict if $\rho \in (0, 1)$. It follows that for a particular value of $\mu$, as long as $\bar{\rho} \leq e^{-\mu}$, $\frac{\partial \ell(\mu, \rho)}{\partial\rho} \leq 0$ for all $\rho \in [0, 1)$, with equality if and only if $\rho = 0$. Therefore $\ell$ is stationary at $\rho = 0$ and strictly decreasing with respect to $\rho$ for all $\rho \in (0, 1)$.
+\end{claimproof}
+\begin{claim}
+When $\bar{\rho} \leq e^{-\mu}$, the value of $\rho$ that maximizes $\ell(\mu, \rho)$ for a given value of $\mu$ is $0$.
+\end{claim}
+\begin{claimproof}[Proof of claim]
+Fix $\mu$ and assume $\bar{\rho} \leq e^{-\mu}$. This implies $\hat{\rho}_{\mu}^* \leq 0$ and therefore is only a valid input for $\rho$ to $\ell(\mu, \rho)$ when $\hat{\rho}_{\mu}^* = 0$. By Claim 1.5, at our chosen value of $\mu$, $\ell(\mu, \rho)$ is stationary at $\rho = 0$ and strictly decreasing with respect to $\rho$ for any value of $\rho > 0$. Thus, $\ell(\mu, 0) \geq \ell(\mu, \rho)$ for all $\rho \in [0, 1)$ with equality if and only if $\rho = 0$. Hence, $\rho = 0$ maximizes $\ell(\mu, \rho)$ for a given value of $\mu$, and so the claim is proved.
+\end{claimproof}
+Together, Claim 1.3 and Claim 1.6 establish the result in the proposition.
+\end{prop-proof}
+
+\begin{prop}
+Suppose we observe a sample of counts $y_1, ..., y_n$ independently and identically distributed according to a zero-inflated Poisson random variable with parameters $\mu$ and $\rho$, where $\mu > 0$ is the expected Poisson count and $\rho \in [0, 1)$ is the probability of excess zero counts. Let $\bar{y} = \frac{1}{n}\sum_{i=1}^n y_i$ denote the sample mean, $\bar{\rho} = \frac{1}{n}\sum_{i=1}^n \mathbbm{1}_{y_i = 0}$ the proportion of observed zero counts in the sample, and $\gamma = \frac{\bar{y}}{1 - \bar{\rho}}$. Then the maximum likelihood estimators for $\mu$ and $\rho$ are given by
+
+$$
+\hat{\mu} = \begin{cases}
+              \text{any positive real number}, & \bar{\rho} = 1 \\
+              W_0(-\gamma e^{-\gamma}) + \gamma, & e^{-\bar{y}} \leq \bar{\rho} < 1  \\
+              \bar{y}, & 0 \leq \bar{\rho} < e^{-\bar{y}}
+              \end{cases}
+$$
+and
+$$
+\hat{\rho} = \begin{cases}
+              \frac{\bar{\rho} - e^{-\hat{\mu}}}{1 - e^{-\hat{\mu}}}, & e^{-\bar{y}} \leq \bar{\rho} \leq 1 \\
+              0, & 0 \leq \bar{\rho} < e^{-\bar{y}}
+              \end{cases}
+$$
+\end{prop}
+
+\begin{prop-proof}[Proof of proposition]
+
+We will begin by first addressing the edge cases where $\bar{\rho} = 0$ and $\bar{\rho} = 1$, corresponding to the scenarios in which the observed sample contains either no zero counts or only zero counts, respectively.
+
+\begin{claim}
+If $\bar{\rho} = 1$, the MLE for $\rho$ is $\hat{\rho} = 1$, and the MLE for $\mu$ can be any positive real number.
+\end{claim}
+
+\begin{claimproof}
+If $\bar{\rho} = 1$, then the sample consists only of zero counts, meaning the likelihood function looks like $$L(\mu, \rho) = (\rho + (1 - \rho)e^{-\mu})^n.$$ The quantity $\rho + (1 - \rho)e^{-\mu}$ is strictly increasing with respect to $\rho$ (see Claim 1.4 in the proof of Proposition 1) and is maximized when $\rho = 1$. Therefore, $\hat{\rho}_{\mu} = 1$. Since this is true regardless of the value of $\mu$, it follows that $\hat{\rho} = 1$ as well.
+
+Evaluating $L$ at this value of $\rho = \hat{\rho}_{\mu}$ yields what is called the profile likelihood for $\mu$, $\L_p(\mu)$. The MLE for $\mu$ will be then the value of $\mu$ that maximizes $L_p(\mu)$. In this case, when we plug $\rho = 1$ into $L(\mu, \rho)$ to obtain the profile likelihood for $\mu$, we simply get $L_p(\mu) = 0$ for all $\mu > 0$. Hence, any positive real number is an equally likely estimate for $\mu$. That is, the sample contains no information about $\mu$ whatsoever, and the MLE for $\mu$ can be said to be any positive real number.
+\end{claimproof}
+
+\begin{claim}
+If $\bar{\rho} = 0$, the MLE for $\rho$ is $\hat{\rho} = 0$, and the MLE for $\mu$ is $\hat{\mu} = \bar{y}$.
+\end{claim}
+
+\begin{claimproof}
+If $\bar{\rho} = 0$, then the sample has no zero counts at all, meaning the likelihood function looks like $$L(\mu, \rho) = \big[(1 - \rho)e^{-\mu}\big]^n \mu^{n\bar{y}}.$$ As a function of $\rho$, this quantity is strictly decreasing, and is therefore maximized over all $\rho \in [0,1]$ at $\rho = 0$. Therefore, $\hat{\rho}_{\mu} = 0$. Since this is true regardless of the value of $\mu$, it follows that $\hat{\rho} = 0$ as well.
+
+When we plug $\rho = 0$ into $\ell(\mu, \rho)$ to obtain the profile log-likelihood for $\mu$, we get $\ell_p(\mu) = n\big[\bar{y} \log \mu - \mu\big]$ for all $\mu > 0$. This is equivalent to the log-likelihood for a regular Poisson distribution, for which the MLE is known to be $\bar{y}$. Hence, $\hat{\mu} = \bar{y}$ when $\bar{\rho} = 0$.
+\end{claimproof}
+
+For the rest of the proof, assume $0 < \bar{\rho} < 1$.
+
+\begin{claim}
+For values of $\mu$ satisfying $\bar{\rho} > e^{-\mu}$, the profile log-likelihood for $\mu$ is given by $\ell_p(\mu) = n\Big[\bar{y}\log \mu - (1-\bar{\rho})\big(\log(1-e^{-\mu}) + \mu \big)\Big].$
+\end{claim}
+
+\begin{claimproof}[Proof of claim]
+From Proposition 1, $\bar{\rho} > e^{-\mu} \implies \hat{\rho}_{\mu} = \frac{\bar{\rho} - e^{-\mu}}{1 - e^{-\mu}}.$ It follows that
+$$
+1 - \hat{\rho}_{\mu} = \frac{1 - e^{-\mu}}{1 - e^{-\mu}} - \frac{\bar{\rho} - e^{-\mu}}{1 - e^{-\mu}} = \frac{1-e^{-\mu} - \bar{\rho} + e^{-\mu}}{1 - e^{-\mu}} = \frac{1 - \bar{\rho}}{1 - e^{-\mu}}.
+$$
+and
+$$
+\hat{\rho}_{\mu} + (1 - \hat{\rho}_{\mu})e^{-\mu} = \frac{\bar{\rho} - e^{-\mu}}{1 - e^{-\mu}} + \frac{1 - \bar{\rho}}{1 - e^{-\mu}}e^{-\mu} = \frac{\bar{\rho}(1 - e^{-\mu})}{1 - e^{-\mu}}  = \bar{\rho}.
+$$
+Thus, when $\bar{\rho} > e^{-\mu}$,
+$$
+\begin{aligned}
+\ell_p(\mu) &= \ell(\mu, \hat{\rho}_{\mu}) \\
+            &= n \bar{\rho}\log\Big(\hat{\rho}_{\mu} + (1 - \hat{\rho}_{\mu})e^{-\mu}\Big) +  n(1-\bar{\rho})\big(\log(1-\hat{\rho}_{\mu}) - \mu\big) + n\bar{y}\log \mu \\
+            &= n \bar{\rho}\log(\bar{\rho}) +  n(1-\bar{\rho})\Bigg(\log\bigg(\frac{1 - \bar{\rho}}{1 - e^{-\mu}}\bigg) - \mu\Bigg) + n\bar{y}\log \mu \\
+            &= n\Big[\bar{y}\log \mu - (1-\bar{\rho})\big(\log(1-e^{-\mu}) + \mu \big)\Big] + n \bar{\rho}\log(\bar{\rho}) + n(1-\bar{\rho})\log(1-\bar{\rho}).
+\end{aligned}
+$$
+Discarding the final two terms as they don't depend on $\mu$ yields the expression for $\ell_p(\mu)$ given in the claim.
+\end{claimproof}
+
+\begin{claim}
+For values of $\mu$ satisfying $\bar{\rho} \leq e^{-\mu}$, the profile log-likelihood for $\mu$ is given by $\ell_p(\mu) = n(\bar{y} \log \mu - \mu)$.
+
+\end{claim}
+
+\begin{claimproof}[Proof of claim]
+From Proposition 1, $\bar{\rho} < e^{-\mu} \implies \hat{\rho}_{\mu} = 0.$ Thus,
+$$
+\begin{aligned}
+\ell_p(\mu) &= \ell(\mu, \hat{\rho}_{\mu}) \\
+            &= n \bar{\rho}\log\Big(\hat{\rho}_{\mu} + (1 - \hat{\rho}_{\mu})e^{-\mu}\Big) +  n(1-\bar{\rho})\big(\log(1-\hat{\rho}_{\mu}) - \mu\big) + n\bar{y}\log \mu \\
+            &= n \bar{\rho}\log(e^{-\mu}) +  n(1-\bar{\rho})\big(\log(1) - \mu\big) + n\bar{y}\log \mu \\
+            &= - n\bar{\rho}\mu - n(1-\bar{\rho})\mu + n\bar{y}\log \mu\\
+            &= n(\bar{y} \log \mu - \mu).
+\end{aligned}
+$$
+
+\end{claimproof}
+
+Together, Claim 2.1 and Claim 2.2 establish that the profile log-likelihood for $\mu$ is given by 
+
+$$
+\ell_p(\mu) = \begin{cases}
+              n\Big[\bar{y}\log \mu - (1-\bar{\rho})\big(\log(1-e^{-\mu}) + \mu \big)\Big], & \bar{\rho} \geq e^{-\mu} \\
+              n(\bar{y} \log \mu - \mu), & \bar{\rho} < e^{-\mu}
+              \end{cases}
+$$
+We will prove that each of the two quantities that delineate $\ell_p$ is maximized at a different value of $\mu$, though these values do not necessarily satisfy the given boundary conditions with respect to $\bar{\rho}$. We will further prove that the scenarios in which these values do satisfy their corresponding conditions are mutually exclusive. Therefore, whichever value satisfies its associated boundary condition with respect to $\bar{\rho}$ will be the MLE for $\mu$.
+
+\begin{claim}
+For any sample of counts $y_1, ..., y_n$, it is always true that $\bar{y} \geq 1- \bar{\rho}$.
+\end{claim}
+
+\begin{claimproof}
+Note that $1 - \bar{\rho}$ can be rewritten as 
+$$
+\begin{aligned}
+1 - \bar{\rho} &= 1 - \frac{1}{n}\sum_{i=1}^n \mathbbm{1}_{y_i = 0} \\
+               &= \frac{n - \sum_{i=1}^n \mathbbm{1}_{y_i = 0}}{n} \\
+               &= \frac{\sum_{i=1}^n 1 - \sum_{i=1}^n \mathbbm{1}_{y_i = 0}}{n} \\
+               &= \frac{\sum_{i=1}^n \big(1 - \mathbbm{1}_{y_i = 0}\big)}{n} \\
+               &= \frac{1}{n} \sum_{i=1}^n \mathbbm{1}_{y_i = 1}.
+\end{aligned}
+$$
+Since each $y_i$ represents a count, it must be a nonnegative integer. Thus, since $y_i = 0 \iff \mathbbm{1}_{y_i = 1} = 0$ and $y_i \geq 1 \iff \mathbbm{1}_{y_i = 1} = 1$, it follows that $y_i \geq \mathbbm{1}_{y_i = 1}$ for all $i$ with equality if and only if $y_i = 0$. Summing over all values of $i$, we have 
+$$
+\sum_{i=1}^n y_i \geq \sum_{i=1}^n \mathbbm{1}_{y_i = 1} \iff \frac{1}{n}\sum_{i=1}^n y_i \geq \frac{1}{n}\sum_{i=1}^n \mathbbm{1}_{y_i = 1} \iff \bar{y} \geq 1 - \bar{\rho}.
+$$
+\end{claimproof}
+
+\begin{claim}
+$\frac{x}{1 - e^x} > -1$ for $x > 0$.
+\end{claim}
+
+\begin{claimproof}
+Let $f(x) = \frac{x}{1 - e^x}$ for $x > 0$. As $x$ approaches $0$ from the right, L'Hospital's rule tells us that $f(x)$ approaches $\frac{1}{-e^0} = -1$. Furthermore, observe that $f$ must be an increasing function since its derivative $f'(x) = \frac{e^x(x-1) + 1}{(1-e^x)^2} > 0$ for $x > 0$. It follows that $f(x) > -1$ for $x > 0$.
+\end{claimproof}
+
+\begin{claim}
+Let $\ell_p^*(\mu) = n\Big[\bar{y}\log \mu - (1-\bar{\rho})\big(\log(1-e^{-\mu}) + \mu \big)\Big]$ for all $\mu > 0$. Then the maximizer of $\ell_p^*(\mu)$ is given by 
+$$
+\hat{\mu}^* = W_0(\gamma e^{-\gamma}) + \gamma,
+$$
+where $\gamma = \frac{\bar{y}}{1 - \bar{rho}}$ and $W_0$ is the principal branch of the Lambert $W$ function.
+\end{claim}
+
+\begin{claimproof}
+The critical point equation is 
+$$
+\begin{aligned}
+0 &\equiv \frac{\partial\ell_p^*}{\partial \mu}\Bigg|_{\mu = \hat{\mu}^*} \\
+  &= n\Bigg[\frac{\bar{y}}{\hat{\mu}^*} - (1 - \bar{\rho})\bigg(\frac{e^{-\hat{\mu}^*}}{1 - e^{-\hat{\mu}^*}} + 1\bigg)\Bigg] \\
+  &= n\Bigg[\frac{\bar{y}}{\hat{\mu}^*} - \frac{1 - \bar{\rho}}{1 - e^{-\hat{\mu}^*}}\Bigg].
+\end{aligned}
+$$
+Dividing through by $n$ and rearranging terms, we have
+$$
+\begin{aligned}
+\bar{y}(1 - e^{-\hat{\mu}^*}) = \hat{\mu}^*(1 - \bar{\rho}) &\implies \frac{\bar{y}}{(1 - \bar{\rho})}\Big(1 - e^{-\hat{\mu}^*}\Big) = \hat{\mu}^* \\
+                                                            &\implies \gamma \Big(1 - e^{-\hat{\mu}^*}\Big) = \hat{\mu}^* \\
+                                                            &\implies -\gamma e^{-\hat{\mu}^*} = \hat{\mu}^* - \gamma \\
+                                                            &\implies -\gamma  = (\hat{\mu}^* - \gamma)e^{\hat{\mu}^*} \\
+                                                            &\implies -\gamma \cdot e^{-\gamma} = (\hat{\mu}^* - \gamma)e^{\hat{\mu}^*} \cdot e^{-\gamma} \\
+                                                            &\implies -\gamma e^{-\gamma} = (\hat{\mu}^* - \gamma)e^{\hat{\mu}^* - \gamma} \\
+                                                            &\implies W_0(-\gamma e^{-\gamma}) = W_0\Big((\hat{\mu}^* - \gamma)e^{\hat{\mu}^* - \gamma}\Big) \\
+                                                            &\implies W_0(-\gamma e^{-\gamma}) = W_0\Big((\hat{\mu}^* - \gamma)e^{\hat{\mu}^* - \gamma}\Big).
+\end{aligned}
+$$
+In general, $W_0(xe^x) = x$ only for $x \geq -1$. By Claim 2.3, it is always true that $\gamma \geq 1$ and so $-\gamma \leq -1$. Thus, the term on the left-hand side of the final line above can only be simplified when $\gamma = 1$, in which case $ W_0(-\gamma e^{-\gamma}) = W_0(-e^{-1}) = -1$. When $\gamma > 1$, no closed-form expression exists with which to simplify it, so we will leave the term as $W_0(-\gamma e^{-\gamma})$ for the sake of generality. 
+
+Turning our attention to the term on the right-hand side, if the quantity $\hat{\mu}^* - \gamma \geq -1$, then the term as a whole will simply be equal to $\hat{\mu}^* - \gamma$. To see why this is true, consider one of the earlier implications above that $\gamma \Big(1 - e^{-\hat{\mu}^*}\Big) = \hat{\mu}^*$. From this, we see that $$\gamma = \frac{\hat{\mu}^*}{1 - e^{-\hat{\mu}^*}}$$ and so 
+$$
+\begin{aligned}
+\hat{\mu}^* - \gamma &= \hat{\mu}^* - \frac{\hat{\mu}^*}{1 - e^{-\hat{\mu}^*}} \\
+                     &= \hat{\mu}^*\Bigg(1 - \frac{1}{1 - e^{-\hat{\mu}^*}}\Bigg) \\
+                     &= \hat{\mu}^*\Bigg(\frac{-e^{-\hat{\mu}^*}}{1 - e^{-\hat{\mu}^*}}\Bigg) \\
+                     &= \hat{\mu}^*\Bigg(\frac{-e^{-\hat{\mu}^*}}{1 - e^{-\hat{\mu}^*}}\cdot \frac{e^{\hat{\mu}^*}}{e^{\hat{\mu}^*}}\Bigg) \\
+                     &= \frac{-\hat{\mu}^*}{e^{\hat{\mu}^*} - 1} \\
+                     &= \frac{\hat{\mu}^*}{1 - e^{\hat{\mu}^*}}.
+\end{aligned}
+$$
+Since we assumed in our formulation of our ZIP model that $\mu >0$, it must also be true that the maximizer $\hat{\mu}^* > 0$. We can therefore invoke Claim 2.4 to conclude that $\hat{\mu}^* - \gamma > -1$ and so $W_0\Big((\hat{\mu}^* - \gamma)e^{\hat{\mu}^* - \gamma}\Big) = \hat{\mu}^* - \gamma$.  
+$$
+\begin{aligned}
+\therefore \hat{\mu}^* - \gamma = W_0(-\gamma e^{-\gamma}) \\
+\therefore \hat{\mu}^* = W_0(-\gamma e^{-\gamma}) + \gamma
+\end{aligned}
+$$
+\end{claimproof}
+
+\begin{claim}
+Let $\ell_p^{**}(\mu) = n(\bar{y}\log \mu - \mu)$ for all $\mu > 0$. Then the maximizer of $\ell_p^{**}(\mu)$ is given by 
+$$
+\hat{\mu}^{**} =\bar{y}.
+$$
+\end{claim}
+
+\begin{claimproof}
+The critical point equation is 
+$$
+0 \equiv \frac{\partial\ell_p^{**}(\mu)}{\partial \mu}\Bigg|_{\mu = \hat{\mu}^*} = n\Bigg[\frac{\bar{y}}{\hat{\mu}^{**}} - 1\Bigg] 
+$$
+$$\implies \frac{\bar{y}}{\hat{\mu}^{**}} = 1$$
+$$\therefore \hat{\mu}^{**} =\bar{y}$$
+
+\end{claimproof}
+
+\begin{claim}
+$\frac{\log\bar{\rho}}{1 - \bar{\rho}} < -1$ for $\bar{\rho} \in (0,1)$.
+\end{claim}
+\begin{claimproof}[Proof of claim]
+Let $f(\bar{\rho}) = \log \bar{\rho} - \bar{\rho} + 1$ for $\bar{\rho} \in (0, 1]$. Then $f'(\bar{\rho}) = \frac{1}{\bar{\rho}} -1$ and so $f'(\bar{\rho}) > 0$ for $\bar{\rho} \in (0,1)$. That is, $f(\bar{\rho})$ is strictly increasing on $(0,1)$. Since $f(1) = 0$, it follows that $f(\bar{\rho}) < 0$ for $\bar{\rho} \in (0,1)$. By the definition of $f$, this further implies that for $\bar{\rho} \in (0,1)$ we must have   
+$$
+\begin{aligned}
+\log \bar{\rho} - \bar{\rho} + 1 < 0 &\implies \log \bar{\rho} < \bar{\rho} - 1 \\
+                                     &\implies \frac{\log \bar{\rho}}{1 - \bar{\rho}} < \frac{\bar{\rho} - 1}{1 - \bar{\rho}} \\
+                                     &\implies \frac{\log \bar{\rho}}{1 - \bar{\rho}} < -1.
+\end{aligned}
+$$
+\end{claimproof}
+
+\begin{claim}
+$\frac{\bar{\rho}\log\bar{\rho}}{1 - \bar{\rho}} > -1$ for $\bar{\rho} \in (0,1)$.
+\end{claim}
+\begin{claimproof}[Proof of claim]
+Let $g(\bar{\rho}) = \bar{\rho}\log \bar{\rho} - \bar{\rho} + 1$ for $\bar{\rho} \in (0, 1]$. Then $g'(\bar{\rho}) = \log \bar{\rho}$ and so $g'(\bar{\rho}) < 0$ for $\bar{\rho} \in (0,1)$. That is, $g(\bar{\rho})$ is strictly decreasing on $(0,1)$. Since $g(1) = 0$, it follows that $g(\bar{\rho}) > 0$ for $\bar{\rho} \in (0,1)$. By the definition of $g$, this further implies that for $\bar{\rho} \in (0,1)$ we must have   
+$$
+\begin{aligned}
+\bar{\rho}\log \bar{\rho} - \bar{\rho} + 1 > 0 &\implies \bar{\rho}\log \bar{\rho} > \bar{\rho} - 1 \\
+                                               &\implies \frac{\bar{\rho}\log \bar{\rho}}{1 - \bar{\rho}} > \frac{\bar{\rho} - 1}{1 - \bar{\rho}} \\
+                                     &\implies \frac{\bar{\rho}\log \bar{\rho}}{1 - \bar{\rho}} > -1.
+\end{aligned}
+$$
+\end{claimproof}
+
+\begin{claim}
+Let $0 < \bar{\rho} < 1$. Then $\delta = \frac{\log\bar{\rho}}{1-\bar{\rho}}$ if and only if $\delta e^{\delta} = \bar{\rho}\delta e^{\bar{\rho}\delta}$.
+\end{claim}
+\begin{claimproof}[Proof of claim]
+$$
+\begin{aligned}
+\delta = \frac{\log\bar{\rho}}{1-\bar{\rho}} &\iff \delta(1-\bar{\rho}) = \log(\bar{\rho}) \\
+                        &\iff e^{\delta(1-\bar{\rho})} = \bar{\rho} \\
+                        &\iff e^{\delta(1-\bar{\rho})} \cdot \delta e^{-\delta} = \bar{\rho}\cdot \delta e^{-\delta} \\
+                        &\iff \delta e^{\delta - \bar{\rho}\delta - \delta} = \bar{\rho}\delta e^{-\delta} \\
+                        &\iff \delta e^{-\bar{\rho}\delta} = \bar{\rho}\delta e^{-\delta} \\
+                        &\iff \delta e^{\delta} = \bar{\rho}\delta e^{\bar{\rho}\delta}.
+\end{aligned}
+$$
+\end{claimproof}
+
+\begin{claim}
+$\bar{\rho} < e^{-\bar{y}} \iff \hat{\mu}^* < \bar{y}.$
+\end{claim}
+
+\begin{claimproof}[Proof of claim]
+Let $\delta = \frac{\log\bar{\rho}}{1-\bar{\rho}}$. A property of the principal branch of the Lambert W function is that $W_0(ye^y) = y \iff y \geq -1$. From Claim 2.7, we know that $\delta < -1$ whenever $\bar{\rho} \in (0,1)$ and therefore $W_0(\delta e^{\delta}) \neq \delta$. However, from Claim 2.8, we know that $\bar{\rho}\delta > -1$ whenever $\bar{\rho} \in (0,1)$ and therefore $W_0(\bar{\rho}\delta e^{\bar{\rho}\delta}) = \bar{\rho}\delta$. Thus, we have
+$$
+\begin{aligned}
+\bar{\rho} < e^{-\bar{y}} &\iff -\bar{y} > \log(\bar{\rho}) \\
+                          &\iff -\frac{\bar{y}}{1-\bar{\rho}} > \frac{\log(\bar{\rho})}{1-\bar{\rho}} \\
+                          &\iff -\gamma > \delta \\
+                          &\iff W_0(-\gamma e^{-\gamma}) < W_0(\delta e^{\delta}) \\
+                          &\iff W_0(-\gamma e^{-\gamma}) < W_0(\bar{\rho}\delta e^{\bar{\rho}\delta}) && (\text{by Claim 2.9})\\
+                          &\iff W_0(-\gamma e^{-\gamma}) < \bar{\rho}\delta \\
+                          &\iff W_0(-\gamma e^{-\gamma}) + \gamma < \bar{\rho}\delta + \gamma \\
+                          &\iff \hat{\mu}^* < -\bar{\rho}\gamma + \gamma \\
+                          &\iff \hat{\mu}^* < \gamma(1-\bar{\rho}) \\
+                          &\iff \hat{\mu}^* < \frac{\bar{y}}{1 - \bar{\rho}}(1 - \bar{\rho}) \\
+                          &\iff \hat{\mu}^* < \bar{y}.
+\end{aligned}
+$$
+\end{claimproof}
+
+\begin{claim}
+$\bar{\rho} = e^{-\bar{y}} \iff \hat{\mu}^* = \bar{y}.$
+\end{claim}
+
+\begin{claimproof}[Proof of claim]
+Let $\delta = \frac{\log\bar{\rho}}{1-\bar{\rho}}$. A property of the principal branch of the Lambert W function is that $W_0(ye^y) = y \iff y \geq -1$. From Claim 2.7, we know that $\delta < -1$ whenever $\bar{\rho} \in (0,1)$ and therefore $W_0(\delta e^{\delta}) \neq \delta$. However, from Claim 2.8, we know that $\bar{\rho}\delta > -1$ whenever $\bar{\rho} \in (0,1)$ and therefore $W_0(\bar{\rho}\delta e^{\bar{\rho}\delta}) = \bar{\rho}\delta$. Thus, we have
+$$
+\begin{aligned}
+\bar{\rho} = e^{-\bar{y}} &\iff -\bar{y} = \log(\bar{\rho}) \\
+                          &\iff -\frac{\bar{y}}{1-\bar{\rho}} = \frac{\log(\bar{\rho})}{1-\bar{\rho}} \\
+                          &\iff -\gamma = \delta \\
+                          &\iff W_0(-\gamma e^{-\gamma}) = W_0(\delta e^{\delta}) \\
+                          &\iff W_0(-\gamma e^{-\gamma}) = W_0(\bar{\rho}\delta e^{\bar{\rho}\delta}) && (\text{by Claim 2.9})\\
+                          &\iff W_0(-\gamma e^{-\gamma}) = \bar{\rho}\delta \\
+                          &\iff W_0(-\gamma e^{-\gamma}) + \gamma = \bar{\rho}\delta + \gamma \\
+                          &\iff \hat{\mu}^* = -\bar{\rho}\gamma + \gamma \\
+                          &\iff \hat{\mu}^* = \gamma(1-\bar{\rho}) \\
+                          &\iff \hat{\mu}^* = \frac{\bar{y}}{1 - \bar{\rho}}(1 - \bar{\rho}) \\
+                          &\iff \hat{\mu}^* = \bar{y}.
+\end{aligned}
+$$ 
+\end{claimproof}
+
+\begin{claim}
+$\bar{\rho} > e^{-\bar{y}} \iff \hat{\mu}^* > \bar{y}.$
+\end{claim}
+
+\begin{claimproof}[Proof of claim]
+Let $\delta = \frac{\log\bar{\rho}}{1-\bar{\rho}}$. A property of the principal branch of the Lambert W function is that $W_0(ye^y) = y \iff y \geq -1$. From Claim 2.7, we know that $\delta < -1$ whenever $\bar{\rho} \in (0,1)$ and therefore $W_0(\delta e^{\delta}) \neq \delta$. However, from Claim 2.8, we know that $\bar{\rho}\delta > -1$ whenever $\bar{\rho} \in (0,1)$ and therefore $W_0(\bar{\rho}\delta e^{\bar{\rho}\delta}) = \bar{\rho}\delta$. Thus, we have
+$$
+\begin{aligned}
+\bar{\rho} > e^{-\bar{y}} &\iff -\bar{y} < \log(\bar{\rho}) \\
+                          &\iff -\frac{\bar{y}}{1-\bar{\rho}} < \frac{\log(\bar{\rho})}{1-\bar{\rho}} \\
+                          &\iff -\gamma < \delta \\
+                          &\iff W_0(-\gamma e^{-\gamma}) > W_0(\delta e^{\delta}) \\
+                          &\iff W_0(-\gamma e^{-\gamma}) > W_0(\bar{\rho}\delta e^{\bar{\rho}\delta}) && (\text{by Claim 2.9})\\
+                          &\iff W_0(-\gamma e^{-\gamma}) > \bar{\rho}\delta \\
+                          &\iff W_0(-\gamma e^{-\gamma}) + \gamma > \bar{\rho}\delta + \gamma \\
+                          &\iff \hat{\mu}^* > -\bar{\rho}\gamma + \gamma \\
+                          &\iff \hat{\mu}^* > \gamma(1-\bar{\rho}) \\
+                          &\iff \hat{\mu}^* > \frac{\bar{y}}{1 - \bar{\rho}}(1 - \bar{\rho}) \\
+                          &\iff \hat{\mu}^* > \bar{y}.
+\end{aligned}
+$$
+
+\end{claimproof}
+
+\begin{claim}
+The MLE for $\mu$ is 
+$$
+\hat{\mu} = \begin{cases}
+              W_0(-\gamma e^{-\gamma}) + \gamma, & \bar{\rho} \geq e^{-\bar{y}} \\
+              \bar{y}, & \bar{\rho} < e^{-\bar{y}}
+              \end{cases}
+$$
+\end{claim}
+
+\begin{claimproof}
+Claim 2.5 tells us that $\hat{\mu}^* = W_0(-\gamma e^{-\gamma}) + \gamma$ is the maximizer of $\ell_p^*(\mu)$ for all values of $\mu > 0$. However, by Claim 2.2, $\ell_p(\mu) = \ell_p^{**}(\mu)$ only for values of $\mu$ satisfying $\bar{\rho} < e^{-\mu}$. Thus, a necessary condition for $\bar{y}$ to be the global maximizer of $\ell_p$ is that $\bar{\rho} < e^{-\bar{y}}$.
+
+Similarly, Claim 2.6 tells us that $\hat{\mu}^{**} =  \bar{y}$ is the maximizer of $\ell_p^{**}(\mu)$ for all values of $\mu > 0$. But by Claim 2.1, $\ell_p(\mu) = \ell_p^*(\mu)$ only for values of $\mu$ satisfying $\bar{\rho} \geq e^{-\mu}$. In particular, it must be true that $\bar{\rho} \geq e^{-\hat{\mu}^*}$ in order for $\hat{\mu}^*$ to be the global maximizer of $\ell_p$.
+
+By Claim 2.10, $\bar{\rho} < e^{-\bar{y}} \iff \hat{\mu}^* < \bar{y} \iff e^{-\hat{\mu}^*} > e^{-\bar{y}} \iff \bar{\rho} < e^{-\hat{\mu}^*}$. Conversely, Claims 2.11 and 2.12 together tell us that $\bar{\rho} \geq e^{-\bar{y}} \iff \hat{\mu}^* \geq \bar{y} \iff e^{-\bar{y}} \geq e^{-\hat{\mu}^*} \iff \bar{\rho} \geq e^{-\hat{\mu}^*}$. The boundary conditions required for $\mu^*$ and $\mu^{**}$ to be the global maximizer of $\ell_p(\mu)$ are therefore mutually exclusive and logically equivalent to the conditions that $\bar{\rho} \geq e^{-\bar{y}}$ or $\bar{\rho} < e^{-\bar{y}}$, respectively. Since the MLE for $\mu$ is this global maximizer, when it exists, the claim follows. 
+\end{claimproof}
+
+\begin{claim}
+The MLE for $\rho$ is 
+$$
+\hat{\rho} = \begin{cases}
+              \frac{\bar{\rho} - e^{-\hat{\mu}}}{1 - e^{-\hat{\mu}}}, & \bar{\rho} \geq e^{-\bar{y}} \\
+              0, & \bar{\rho} < e^{-\bar{y}}
+              \end{cases}
+$$
+\end{claim}
+
+\begin{claimproof}
+Proposition 1 tells us that $\hat{\rho}_{\mu} = \frac{\bar{\rho} - e^{-\mu}}{1 - e^{-\mu}}$ when $\bar{\rho} \geq e^{-\mu}$. From Claim 2.13, we know that $\hat{\mu} = W_0(-\gamma e^{-\gamma}) + \gamma$ in the event that $\bar{\rho} \geq e^{-\bar{y}}$. It follows that $\hat{\rho} = \frac{\bar{\rho} - e^{-\hat{\mu}}}{1 - e^{-\hat{\mu}}}$ for $\bar{\rho} \geq e^{-\bar{y}}$ as well. By a similar argument, $\hat{\rho} = 0$ for $\bar{\rho} < e^{-\bar{y}}$.
+\end{claimproof}
+
+\end{prop-proof}
+
+
+
+

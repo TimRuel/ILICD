@@ -94,9 +94,9 @@ where $\mathbbm{1}_{y = 0}$ denotes an indicator function that assumes the value
 
 Suppose we observe multiple counts $Y_1, ..., Y_n$ generated independently and identically from $Y$.^[Recall that the parameter of a generic Poisson random variable is defined relative to a fixed length of time during which observations may be recorded and added to the running total. By assuming that all counts come from the same ZIP-distributed random variable, we are implicitly assuming that each count was recorded over the same period of time and thus are on equal footing with one another.] The likelihood function for $\mu$ and $\rho$ based on an individual observation $Y_i = y_i$ is simply equal to the pmf for $Y$ evaluated at $y_i$. That is, 
 $$
-L(\mu, \rho; y_i) = \Big(\rho + (1 - \rho)e^{-\mu}\Big)^{\mathbbm{1}_{y_i = 0}}\Bigg(   (1-\rho)\frac{e^{-\mu}\mu^{y_i}}{y_i!}\Bigg)^{1 - {\mathbbm{1}_{y_i = 0}}}, \> \> \mu > 0, \> \> \rho \in [0, 1).
+L(\mu, \rho; y_i) = \Big(\rho + (1 - \rho)e^{-\mu}\Big)^{\mathbbm{1}_{y_i = 0}}\Bigg(   (1-\rho)\frac{e^{-\mu}\mu^{y_i}}{y_i!}\Bigg)^{1 - {\mathbbm{1}_{y_i = 0}}}, \> \> \mu > 0, \> \> \rho \in [0, 1].
 $$ {#eq-3-2-5} 
-We can safely ignore any multiplicative constant in $L$ without influencing our inferences regarding $\mu$ and $\rho$. In particular, we can discard the term $\Big(\frac{1}{y_i!}\Big)^{1 - {\mathbbm{1}_{y_i = 0}}}$ as it depends only on the observation $y_i$ and is constant with respect to the model parameters. Hence, we may write 
+To avoid irksome edge cases in which the sample consists of either no zero counts or only zero counts, we will operate under the assumption that the quantity $0^0 = 1$. We can also safely ignore any multiplicative constant in $L$ without influencing our inferences regarding $\mu$ and $\rho$. In particular, we can discard the term $\Big(\frac{1}{y_i!}\Big)^{1 - {\mathbbm{1}_{y_i = 0}}}$ as it depends only on the observation $y_i$ and is constant with respect to the model parameters. Hence, we may write 
 $$
 L(\mu, \rho; y_i) = \Big(\rho + (1 - \rho)e^{-\mu}\Big)^{\mathbbm{1}_{y_i = 0}}\Big(   (1-\rho)e^{-\mu}\mu^{y_i}\Big)^{1 - {\mathbbm{1}_{y_i = 0}}}, \> \> \mu > 0, \> \> \rho \in [0, 1).
 $$ {#eq-3-2-6}

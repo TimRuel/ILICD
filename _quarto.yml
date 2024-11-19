@@ -18,7 +18,7 @@ book:
     - ./sections/importance_sampling.qmd
     - ./sections/references.qmd
   appendices: 
-    - ./sections/appendices/derivations.qmd
+    - ./sections/appendices/propositions.qmd
 
 bibliography: references.bib
 csl: diabetologia.csl

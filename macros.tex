@@ -1,16 +1,18 @@
 \numberwithin{equation}{section}
 
 \theoremstyle{plain}
-\newtheorem{theorem}{Theorem}
-\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{prop}{Proposition}
+\newtheorem{claim}{Claim}[prop]
 
-\newtheorem{claim}{Claim}[theorem]
+% \newtheorem{prop-proof}{Proof of Proposition}
 
-\theoremstyle{nonumberplain}
-\theoremsymbol{\ensuremath{\Box}}
-\newtheorem{proof}{Proof}
+\newenvironment{prop-proof}[1][\proofname]
+{\renewcommand\qedsymbol{$\square$}\proof[#1]}
+{\endproof}
 
-\theoremsymbol{\ensuremath{\blacksquare}}
-\newtheorem{claimproof}{Proof of Claim \theclaim}
+\newenvironment{claimproof}[1][\proofname]
+{\renewcommand\qedsymbol{$\blacksquare$}\proof[#1]}
+{\endproof}
 
 \renewcommand{\eqref}[1]{Equation~\ref{#1}}
+
