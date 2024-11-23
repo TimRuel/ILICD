@@ -27,14 +27,14 @@ mu <- 5
 U <- rbinom(n, 1, 1 - pi)
 V <- rpois(n, mu)
 data <- data.frame(U, V) |> 
-  mutate(W = U * V,
+  mutate(Y = U * V,
          label = case_when(V == 0 ~ "Poisson",
                            (V > 0) & (U == 1) ~ "Poisson", 
                            TRUE ~ "Bernoulli (excess zeros)"))
 data |> 
   data.frame() |> 
   ggplot() +
-  geom_histogram(aes(x = W, 
+  geom_histogram(aes(x = Y, 
                      y = after_stat(count) / (sum(after_stat(count)) * after_stat(width)),
                      fill = label),
                  color = "black",
@@ -143,11 +143,14 @@ $$ {#eq-3-2-12}
 Suppose that $\mu$ is our parameter of interest, and $\rho$ is a nuisance parameter. The partial-MLE for $\rho$ given a particular value of $\mu$, as defined in @eq-2-1-2, is given by 
 $$
 \hat{\rho}_{\mu} = \begin{cases}
-                \frac{\bar{\rho} - e^{-\mu}}{1 - e^{-\mu}}, & \bar{\rho} \geq e^{-\mu} \\
-                0, & \bar{\rho} < e^{-\mu}
+                \frac{\bar{\rho} - e^{-\mu}}{1 - e^{-\mu}}, & e^{-\mu} < \bar{\rho} \leq 1 \\
+                0, & 0 \leq \bar{\rho} \leq e^{-\mu}
                 \end{cases}
 $${#eq-3-2-13}
-See Appendix A for a formal proof of this statement. Since $\rho$ represents the probability of excess zero counts in the sample, it is unsurprising that our estimate of $\rho$ when $\bar{\rho} \geq e^{-\mu}$ turns out simply to be $0$.^[Recall that $e^{-\mu}$ is the probability of observing a zero under a non-zero-inflated Poisson random variable with rate parameter $\mu$.] Indeed, the observation that $\bar{\rho} \geq e^{-\mu}$ could be considered a bellwether for zero-inflation, as it indicates an empirical excess of zero counts relative to what we would expect for a non-zero-inflated Poisson random variable. Hence, we refer to it as the *zero-inflated condition*. Assuming no zero-inflation is present, the MLE of $\mu$ is the sample mean $\bar{y}$. When $\mu$ is unknown, as is typically the case, a sensible choice is therefore to replace it with $\bar{y}$ so that the veracity of $\bar{\rho} \geq e^{-\bar{y}}$ becomes our test of zero-inflation. 
+See Appendix A for a formal proof of this statement. 
+
+
+Since $\rho$ represents the probability of excess zero counts in the sample, it is unsurprising that our estimate of $\rho$ when $\bar{\rho} \geq e^{-\mu}$ turns out simply to be $0$.^[Recall that $e^{-\mu}$ is the probability of observing a zero under a non-zero-inflated Poisson random variable with rate parameter $\mu$.] Indeed, the observation that $\bar{\rho} \geq e^{-\mu}$ could be considered a bellwether for zero-inflation, as it indicates an empirical excess of zero counts relative to what we would expect for a non-zero-inflated Poisson random variable. Hence, we refer to it as the *zero-inflated condition*. Assuming no zero-inflation is present, the MLE of $\mu$ is the sample mean $\bar{y}$. When $\mu$ is unknown, as is typically the case, a sensible choice is therefore to replace it with $\bar{y}$ so that the veracity of $\bar{\rho} \geq e^{-\bar{y}}$ becomes our test of zero-inflation. 
 
 Assume that our observed sample of counts $y_1, ..., y_n$ satisfies the zero-inflated condition, so that $\hat{\rho}_{\mu} = \frac{\bar{\rho} - e^{-\mu}}{1 - e^{-\mu}}.$ This implies 
 $$
@@ -173,16 +176,24 @@ $${#eq-3-2-17}
 
 ### Integrated Likelihood
 
+The MLEs for $\mu$ and $\rho$ are given by 
 $$
 \begin{aligned}
-L(\mu, \rho; y_{\bullet}) &= \exp\Big\{\ell(\mu, \rho; y_{\bullet})\Big\} \\
-                          &= \exp\bigg\{n \bar{\rho}\log\Big(\rho + (1 - \rho)e^{-\mu}\Big) +  n(1-\bar{\rho})\big(\log(1-\rho) - \mu\big) + n\bar{y}\log \mu\bigg\} \\
-                          &= \Big[\rho + (1 - \rho)e^{-\mu} \Big]^{n\bar{\rho}}\Big[(1 - \rho)e^{-\mu} \Big]^{n(1-\bar{\rho})}\mu^{n \bar{y}}.
+\hat{\mu} &= \begin{cases}
+             \text{any positive real number}, & \bar{\rho} = 1 \\
+             W_0(-\gamma e^{-\gamma}) + \gamma, & e^{-\bar{y}} < \bar{\rho} < 1  \\
+             \bar{y}, & 0 \leq \bar{\rho} \leq e^{-\bar{y}}
+             \end{cases} \\
+\hat{\rho} &= \begin{cases}
+              \frac{\bar{\rho} - e^{-\hat{\mu}}}{1 - e^{-\hat{\mu}}}, & e^{-\bar{y}} < \bar{\rho} \leq 1 \\
+              0, & 0 \leq \bar{\rho} \leq e^{-\bar{y}}
+              \end{cases}
 \end{aligned}
 $$
+where $\gamma = \frac{\bar{y}}{1 - \bar{\rho}}$ and $W_0$ is the principal branch of the Lambert W function.^[See Proposition 2 in Appendix A for a formal derivation.]
 
 $$
-\frac{\partial \ell(\mu, \pi)}{\partial\pi} = n\Bigg[\frac{\bar{\pi}(1 - e^{-\mu})}{\pi + (1-\pi)e^{-\mu}} - \frac{1 - \bar{\pi}}{1 - \pi}\Bigg].
+\frac{\partial \ell(\mu, \rho)}{\partial\rho} = n\Bigg[\frac{\bar{\rho}(1 - e^{-\mu})}{\rho + (1-\rho)e^{-\mu}} - \frac{1 - \bar{\rho}}{1 - \rho}\Bigg].
 $$
 $$
 \begin{aligned}
@@ -199,6 +210,81 @@ $$
 \text{E}(\bar{\rho}; \hat{\mu}, \phi) \equiv \text{E}(\bar{\rho}; \mu_0, \rho_0)\Big|_{(\mu_0, \rho_0) = (\hat{\mu}, \phi)} = \phi + (1 - \phi)e^{-\hat{\mu}}.
 $$
 
+$$
+\begin{aligned}
+E\Bigg(\frac{\partial \ell}{\partial \rho}; \hat{\mu}, \phi \Bigg) &= n\Bigg[\frac{\text{E}(\bar{\rho}; \hat{\mu}, \phi)(1 - e^{-\mu})}{\rho + (1-\rho)e^{-\mu}} - \frac{1 - \text{E}(\bar{\rho}; \hat{\mu}, \phi)}{1 - \rho}\Bigg] \\
+                                                                   &= n\Bigg[\frac{\big(\phi + (1 - \phi)e^{-\hat{\mu}}\big)(1 - e^{-\mu})}{\rho + (1-\rho)e^{-\mu}} - \frac{1 - \big(\phi + (1 - \phi)e^{-\hat{\mu}}\big)}{1 - \rho}\Bigg] \\
+\end{aligned}
+$$
+By definition, the ZSE parameter $\phi$ satisfies 
+$$
+E\Bigg(\frac{\partial \ell}{\partial \rho}; \hat{\mu}, \phi \Bigg) = 0,
+$$
+and therefore
 
+$$
+\begin{aligned}
+\frac{\big(\phi + (1 - \phi)e^{-\hat{\mu}}\big)(1 - e^{-\mu})}{\rho + (1-\rho)e^{-\mu}} &= \frac{1 - \big(\phi + (1 - \phi)e^{-\hat{\mu}}\big)}{1 - \rho} \\ 
+&\iff \\
+\frac{1 - \big(\phi + (1 - \phi)e^{-\hat{\mu}}\big)}{\big(\phi + (1 - \phi)e^{-\hat{\mu}}\big)} &= \frac{(1 - \rho)(1 - e^{-\mu})}{\rho + (1-\rho)e^{-\mu}} \\
+&\iff \\
+\phi + (1 - \phi)e^{-\hat{\mu}} &= \Bigg(\frac{(1 - \rho)(1 - e^{-\mu})}{\rho + (1-\rho)e^{-\mu}} + 1\Bigg)^{-1} &&\Bigg(\frac{1-A}{A} = B \iff A = \frac{1}{B + 1} \Bigg) \\
+&\iff \\
+\phi + (1 - \phi)e^{-\hat{\mu}} &= \Bigg(\frac{(1 - \rho)(1 - e^{-\mu}) + \rho + (1-\rho)e^{-\mu}}{\rho + (1-\rho)e^{-\mu}}\Bigg)^{-1} \\ 
+&\iff \\
+\phi + (1 - \phi)e^{-\hat{\mu}} &= \Bigg(\frac{1 - \rho + \rho}{\rho + (1-\rho)e^{-\mu}}\Bigg)^{-1} \\ 
+&\iff \\
+\phi + (1 - \phi)e^{-\hat{\mu}} &= \Bigg(\frac{1}{\rho + (1-\rho)e^{-\mu}}\Bigg)^{-1} \\ 
+&\iff \\
+\phi + (1 - \phi)e^{-\hat{\mu}} &= \rho + (1-\rho)e^{-\mu}.
+\end{aligned}
+$$
+It further follows that 
+$$
+\begin{aligned}
+\rho + e^{-\mu} - \rho e^{-\mu} &= \phi + (1 - \phi)e^{-\hat{\mu}} \\
+&\iff \\
+e^{-\mu} + \rho(1 - e^{-\mu}) &= \phi + (1 - \phi)e^{-\hat{\mu}} \\
+&\iff \\
+\rho &= \frac{\phi + (1 - \phi)e^{-\hat{\mu}} - e^{-\mu}}{1 - e^{-\mu}} \\
+&\iff \\
+\rho &= \frac{\phi - \phi e^{-\hat{\mu}} + e^{-\hat{\mu}} - e^{-\mu}}{1 - e^{-\mu}} \\
+&\iff \\
+\rho &= \phi\Bigg(\frac{1 - e^{-\hat{\mu}}}{1 - e^{-\mu}}\Bigg) + \frac{e^{-\hat{\mu}} - e^{-\mu}}{1 - e^{-\mu}},
+\end{aligned}
+$$
+and therefore
+$$
+\begin{aligned}
+1 - \rho &= 1 - \phi\Bigg(\frac{1 - e^{-\hat{\mu}}}{1 - e^{-\mu}}\Bigg) - \frac{e^{-\hat{\mu}} - e^{-\mu}}{1 - e^{-\mu}} \\
+         &= \frac{1 - e^{-\hat{\mu}}}{1 - e^{-\mu}} - \phi\Bigg(\frac{1 - e^{-\hat{\mu}}}{1 - e^{-\mu}}\Bigg) \\
+         &= (1 - \phi)\Bigg(\frac{1 - e^{-\hat{\mu}}}{1 - e^{-\mu}} \Bigg).
+\end{aligned}
+$$
 
+The likelihood function for $(\mu, \rho)$ may be written $L(\mu, \rho(\mu, \phi))$. Replacing $\rho$ with $\rho(\mu, \phi)$ in $L$ is equivalent to substituting in our expressions for $\rho + (1-\rho)e^{-\mu}$ and $1-\rho$ in terms of $\phi$, $\mu$, and $\hat{\mu}$. Thus, we have 
+
+$$
+\begin{aligned}
+L(\mu, \rho; y_{\bullet}) &= \exp\Big\{\ell(\mu, \rho; y_{\bullet})\Big\} \\
+                          &= \exp\bigg\{n \bar{\rho}\log\Big(\rho + (1 - \rho)e^{-\mu}\Big) +  n(1-\bar{\rho})\big(\log(1-\rho) - \mu\big) + n\bar{y}\log \mu\bigg\} \\
+                          &= \Big[\rho + (1 - \rho)e^{-\mu} \Big]^{n\bar{\rho}}\Big[(1 - \rho)e^{-\mu} \Big]^{n(1-\bar{\rho})}\mu^{n \bar{y}} \\
+                          &= \Big[\phi + (1 - \phi)e^{-\hat{\mu}} \Big]^{n\bar{\rho}}\Bigg[(1 - \phi)\Bigg(\frac{1 - e^{-\hat{\mu}}}{1 - e^{-\mu}} \Bigg) e^{-\mu}\Bigg]^{n(1-\bar{\rho})}\mu^{n \bar{y}} \\
+                          &= \Big[\phi + (1 - \phi)e^{-\hat{\mu}} \Big]^{n\bar{\rho}}\Big[(1 - \phi)\big(1 - e^{-\hat{\mu}}\big) \Big]^{n(1-\bar{\rho})}\Bigg[\frac{e^{-\mu}}{1 - e^{-\mu}}\Bigg]^{n(1-\bar{\rho})}\mu^{n \bar{y}}.
+\end{aligned}
+$$
+Given a weight function $\pi(\phi)$ for $\phi$, the integrated likelihood for $\mu$ is therefore given by
+$$
+\begin{aligned}
+\bar{L}(\mu) &= \int_{\Phi} L(\mu, \rho(\mu, \phi))\pi(\phi)d\phi \\
+             &= \int_{\Phi} \Big[\phi + (1 - \phi)e^{-\hat{\mu}} \Big]^{n\bar{\rho}}\Big[(1 - \phi)\big(1 - e^{-\hat{\mu}}\big) \Big]^{n(1-\bar{\rho})}\Bigg[\frac{e^{-\mu}}{1 - e^{-\mu}}\Bigg]^{n(1-\bar{\rho})}\mu^{n \bar{y}}\pi(\phi)d\phi \\
+             &= \Bigg[\frac{e^{-\mu}}{1 - e^{-\mu}}\Bigg]^{n(1-\bar{\rho})}\mu^{n \bar{y}}\int_{\Phi} \Big[\phi + (1 - \phi)e^{-\hat{\mu}} \Big]^{n\bar{\rho}}\Big[(1 - \phi)\big(1 - e^{-\hat{\mu}}\big) \Big]^{n(1-\bar{\rho})}\pi(\phi)d\phi \\
+             &= C \cdot \Bigg[\frac{e^{-\mu}}{1 - e^{-\mu}}\Bigg]^{n(1-\bar{\rho})}\mu^{n \bar{y}},
+\end{aligned}
+$$
+where $C = \int_{\Phi} \Big[\phi + (1 - \phi)e^{-\hat{\mu}} \Big]^{n\bar{\rho}}\Big[(1 - \phi)\big(1 - e^{-\hat{\mu}}\big) \Big]^{n(1-\bar{\rho})}\pi(\phi)d\phi$. Disregarding $C$ as it is a constant not depending on $\mu$, we have 
+$$
+\bar{L}(\mu) = \Bigg[\frac{e^{-\mu}}{1 - e^{-\mu}}\Bigg]^{n(1-\bar{\rho})}\mu^{n \bar{y}}.
+$$
+We recognize this as being the same expression for the profile likelihood for $\mu$, so that $\bar{L}(\mu) = L_p(\mu)$. Hence, inferences for the Poisson parameter of a ZIP model based on the integrated likelihood obtained under the ZSE parameterization of the model's zero-inflation parameter will be identical to those based on the profile likelihood.
 

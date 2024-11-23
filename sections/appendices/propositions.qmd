@@ -113,15 +113,15 @@ Suppose we observe a sample of counts $y_1, ..., y_n$ independently and identica
 $$
 \hat{\mu} = \begin{cases}
               \text{any positive real number}, & \bar{\rho} = 1 \\
-              W_0(-\gamma e^{-\gamma}) + \gamma, & e^{-\bar{y}} \leq \bar{\rho} < 1  \\
-              \bar{y}, & 0 \leq \bar{\rho} < e^{-\bar{y}}
+              W_0(-\gamma e^{-\gamma}) + \gamma, & e^{-\bar{y}} < \bar{\rho} < 1  \\
+              \bar{y}, & 0 \leq \bar{\rho} \leq e^{-\bar{y}}
               \end{cases}
 $$
 and
 $$
 \hat{\rho} = \begin{cases}
-              \frac{\bar{\rho} - e^{-\hat{\mu}}}{1 - e^{-\hat{\mu}}}, & e^{-\bar{y}} \leq \bar{\rho} \leq 1 \\
-              0, & 0 \leq \bar{\rho} < e^{-\bar{y}}
+              \frac{\bar{\rho} - e^{-\hat{\mu}}}{1 - e^{-\hat{\mu}}}, & e^{-\bar{y}} < \bar{\rho} \leq 1 \\
+              0, & 0 \leq \bar{\rho} \leq e^{-\bar{y}}
               \end{cases}
 $$
 \end{prop}
